@@ -1,3 +1,10 @@
+
+
+
+/**
+ * @param {!Element} container
+ * @constructor
+ */
 var BabyStats = function(container) {
   this.container_ = container;
 
@@ -28,6 +35,7 @@ var BabyStats = function(container) {
   this.buildGrid_();
 };
 
+
 /**
  * Add a CSS class to a node if it doesn't already have it.
  * @param {!Node} node Node object to add class to
@@ -35,7 +43,9 @@ var BabyStats = function(container) {
  * @private
  */
 BabyStats.prototype.addCSSClass_ = function(node, className) {
-  var classes = node.className.split(' ').filter(function(className) { return className; });
+  var classes = node.className.split(' ').filter(function(className) {
+    return className;
+  });
   if (classes.indexOf(className) != -1) {
     // Already has class.
     return;
@@ -45,6 +55,12 @@ BabyStats.prototype.addCSSClass_ = function(node, className) {
 };
 
 
+/**
+ * Check if we need to rebuild the grid layout because of optimal layout
+ * changes.
+ * @param {Event} e
+ * @private
+ */
 BabyStats.prototype.rebuildIfNeeded_ = function(e) {
   var grid = this.calculateGrid_();
   if (this.gridWidthCells_ != grid.gridWidthCells ||
@@ -54,6 +70,7 @@ BabyStats.prototype.rebuildIfNeeded_ = function(e) {
     this.buildGrid_();
   }
 };
+
 
 /**
  * Construct our stylesheet and insert it into the DOM.
@@ -128,8 +145,9 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.addCSSClass_(this.container_, 'babyStatsContainer');
 };
 
+
 /**
- * Construct cameraGridCell options for insertion into the DOM.
+ * Construct babyStateCell elements for insertion into the DOM.
  * @private
  */
 BabyStats.prototype.buildCells_ = function() {
@@ -149,6 +167,13 @@ BabyStats.prototype.buildCells_ = function() {
   }, this);
 };
 
+
+/**
+ * Handle a click event on a button.
+ * @param {string} eventName short name of event to send
+ * @param {Element} overlay element to make visible with countdown timer
+ * @private
+ */
 BabyStats.prototype.onClick_ = function(eventName, overlay) {
   if (this.intervals_[eventName]) {
     window.clearInterval(this.intervals_[eventName]);
@@ -183,10 +208,11 @@ BabyStats.prototype.onClick_ = function(eventName, overlay) {
   }.bind(this), 1000);
 };
 
+
 /**
  * Calculate optimal grid sizing.
  * This pile of magic math calculates the optimal grid width and height to
- * maximize the size of all video feeds while preserving their aspect ratios.
+ * maximize the size of all buttons while preserving their aspect ratio.
  * @return {{
  *   gridWidthCells: number,
  *   gridHeightCells: number,
@@ -200,16 +226,18 @@ BabyStats.prototype.calculateGrid_ = function() {
   var containerHeight = this.gridContainer_.offsetHeight;
   var numTiles = this.tiles_.length;
 
-  var scaleFactor = ((containerHeight / this.tileScaleHeight_)
-                     / (containerWidth / this.tileScaleWidth_));
+  var heightFactor = containerHeight / this.tileScaleHeight_;
+  var widthFactor = containerWidth / this.tileScaleWidth_;
+
+  var scaleFactor = heightFactor / widthFactor;
 
   var gridHeight = Math.sqrt(scaleFactor * numTiles);
   var gridWidth = Math.sqrt(numTiles / scaleFactor);
 
   var gridOptions = [
-    [ Math.ceil(gridWidth), Math.floor(gridHeight) ],
-    [ Math.floor(gridWidth), Math.ceil(gridHeight) ],
-    [ Math.ceil(gridWidth), Math.ceil(gridHeight) ],
+    [Math.ceil(gridWidth), Math.floor(gridHeight)],
+    [Math.floor(gridWidth), Math.ceil(gridHeight)],
+    [Math.ceil(gridWidth), Math.ceil(gridHeight)],
   ];
 
   // Check all possible options.
@@ -256,10 +284,16 @@ BabyStats.prototype.calculateGrid_ = function() {
   };
 };
 
+
+/**
+ * Construct the outer DOM layout.
+ * @private
+ */
 BabyStats.prototype.buildLayout_ = function() {
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
   this.container_.appendChild(this.gridContainer_);
 };
+
 
 /**
  * Construct the grid objects in the DOM.
