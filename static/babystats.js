@@ -81,10 +81,35 @@ BabyStats.prototype.buildStylesheet_ = function() {
   var style = document.createElement('style');
   document.head.appendChild(style);
 
+  style.sheet.insertRule('.babyStatsChildName, .babyStatsYourName {}', 0);
+  var inputs = style.sheet.cssRules[0];
+  inputs.style.display = 'block';
+  inputs.style.height = '40px';
+  inputs.style.width = '100%';
+  inputs.style.border = 'none';
+  inputs.style.padding = '4px';
+  inputs.style.backgroundColor = 'rgb(189,21,80)';
+  inputs.style.color = 'rgb(248,202,0)';
+  inputs.style.fontSize = '28px';
+  inputs.style.textAlign = 'center';
+
+  style.sheet.insertRule(
+      '.babyStatsChildName::-webkit-input-placeholder, ' +
+      '.babyStatsYourName::-webkit-input-placeholder {}', 0);
+  var placeholders = style.sheet.cssRules[0];
+  placeholders.style.color = 'rgba(248,202,0,0.6)';
+
+  style.sheet.insertRule(
+      '.babyStatsChildName:focus, ' +
+      '.babyStatsYourName:focus {}', 0);
+  var focus = style.sheet.cssRules[0];
+  focus.style.outline = 'none';
+  focus.style.textDecoration = 'underline';
+
   style.sheet.insertRule('babyStatsGridContainer {}', 0);
   var gridContainer = style.sheet.cssRules[0];
   gridContainer.style.position = 'absolute';
-  gridContainer.style.top = 0;
+  gridContainer.style.top = '80px';
   gridContainer.style.left = 0;
   gridContainer.style.bottom = 0;
   gridContainer.style.right = 0;
@@ -290,6 +315,16 @@ BabyStats.prototype.calculateGrid_ = function() {
  * @private
  */
 BabyStats.prototype.buildLayout_ = function() {
+  this.childName_ = document.createElement('input');
+  this.addCSSClass_(this.childName_, 'babyStatsChildName');
+  this.childName_.placeholder = 'Child name';
+  this.container_.appendChild(this.childName_);
+
+  this.yourName_ = document.createElement('input');
+  this.addCSSClass_(this.yourName_, 'babyStatsYourName');
+  this.yourName_.placeholder = 'Your name';
+  this.container_.appendChild(this.yourName_);
+
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
   this.container_.appendChild(this.gridContainer_);
 };
