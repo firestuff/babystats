@@ -328,7 +328,9 @@ BabyStats.prototype.buildLayout_ = function() {
   this.yourName_ = document.createElement('input');
   this.addCSSClass_(this.yourName_, 'babyStatsYourName');
   this.yourName_.placeholder = 'Your name';
+  this.yourName_.value = localStorage.getItem('babyStats:yourName') || '';
   this.yourName_.addEventListener('input', this.checkOverlay_.bind(this));
+  this.yourName_.addEventListener('input', this.onYourNameChange_.bind(this));
   this.container_.appendChild(this.yourName_);
 
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
@@ -336,6 +338,8 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   this.container_.appendChild(this.gridOverlay_);
+
+  this.checkOverlay_();
 };
 
 
@@ -349,6 +353,15 @@ BabyStats.prototype.checkOverlay_ = function() {
     visibility = 'hidden';
   }
   this.gridOverlay_.style.visibility = visibility;
+};
+
+
+/**
+ * Store your name value locally.
+ * @private
+ */
+BabyStats.prototype.onYourNameChange_ = function() {
+  localStorage.setItem('babyStats:yourName', this.yourName_.value);
 };
 
 
