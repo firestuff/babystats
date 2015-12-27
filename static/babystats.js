@@ -331,6 +331,7 @@ BabyStats.prototype.buildLayout_ = function() {
   this.childName_.placeholder = 'Child name';
   this.childName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.container_.appendChild(this.childName_);
+  this.childName_.focus();
 
   this.yourName_ = document.createElement('input');
   this.addCSSClass_(this.yourName_, 'babyStatsYourName');
