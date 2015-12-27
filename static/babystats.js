@@ -18,6 +18,7 @@ var BabyStats = function(container) {
 
   this.buildCells_();
   this.buildStylesheet_();
+  this.buildLayout_();
 
   window.addEventListener('resize', this.rebuildIfNeeded_.bind(this));
 
@@ -62,6 +63,14 @@ BabyStats.prototype.buildStylesheet_ = function() {
   // http://www.colourlovers.com/palette/848743/(%E2%97%95_%E2%80%9D_%E2%97%95)
   var style = document.createElement('style');
   document.head.appendChild(style);
+
+  style.sheet.insertRule('babyStatsGridContainer {}', 0);
+  var gridContainer = style.sheet.cssRules[0];
+  gridContainer.style.position = 'absolute';
+  gridContainer.style.top = 0;
+  gridContainer.style.left = 0;
+  gridContainer.style.bottom = 0;
+  gridContainer.style.right = 0;
 
   style.sheet.insertRule('babyStatsRow {}', 0);
   this.rowRule_ = style.sheet.cssRules[0];
@@ -187,8 +196,8 @@ BabyStats.prototype.onClick_ = function(eventName, overlay) {
  * @private
  */
 BabyStats.prototype.calculateGrid_ = function() {
-  var containerWidth = this.container_.offsetWidth;
-  var containerHeight = this.container_.offsetHeight;
+  var containerWidth = this.gridContainer_.offsetWidth;
+  var containerHeight = this.gridContainer_.offsetHeight;
   var numTiles = this.tiles_.length;
 
   var scaleFactor = ((containerHeight / this.tileScaleHeight_)
@@ -247,12 +256,17 @@ BabyStats.prototype.calculateGrid_ = function() {
   };
 };
 
+BabyStats.prototype.buildLayout_ = function() {
+  this.gridContainer_ = document.createElement('babyStatsGridContainer');
+  this.container_.appendChild(this.gridContainer_);
+};
+
 /**
  * Construct the grid objects in the DOM.
  * @private
  */
 BabyStats.prototype.buildGrid_ = function() {
-  this.container_.innerHTML = '';
+  this.gridContainer_.innerHTML = '';
 
   this.rowRule_.style.height = 100 / this.gridHeightCells_ + '%';
   this.cellRule_.style.width = 100 / this.gridWidthCells_ + '%';
@@ -267,6 +281,6 @@ BabyStats.prototype.buildGrid_ = function() {
         i++;
       }
     }
-    this.container_.appendChild(row);
+    this.gridContainer_.appendChild(row);
   }
 };
