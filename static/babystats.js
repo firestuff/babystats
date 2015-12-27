@@ -102,13 +102,20 @@ BabyStats.prototype.buildStylesheet_ = function() {
 
   style.sheet.insertRule('babyStatsGridOverlay {}', 0);
   var gridOverlay = style.sheet.cssRules[0];
+  gridOverlay.style.display = 'flex';
   gridOverlay.style.position = 'absolute';
   gridOverlay.style.top = '80px';
   gridOverlay.style.left = 0;
   gridOverlay.style.bottom = 0;
   gridOverlay.style.right = 0;
+  gridOverlay.style.alignItems = 'center';
+  gridOverlay.style.justifyContent = 'center';
   gridOverlay.style.backgroundColor = 'white';
-  gridOverlay.style.opacity = 0.7;
+  gridOverlay.style.color = 'rgb(189,21,80)';
+  gridOverlay.style.textShadow = '0 0 2px rgb(248,202,0)';
+  gridOverlay.style.fontSize = '6vmin';
+  gridOverlay.style.fontWeight = 'bold';
+  gridOverlay.style.transition = '0.4s';
 
   style.sheet.insertRule('babyStatsGridContainer {}', 0);
   var gridContainer = style.sheet.cssRules[0];
@@ -348,11 +355,21 @@ BabyStats.prototype.buildLayout_ = function() {
  * @private
  */
 BabyStats.prototype.checkOverlay_ = function() {
-  var visibility = 'visible';
-  if (this.childName_.value && this.yourName_.value) {
-    visibility = 'hidden';
+  var message = '';
+  if (!this.childName_.value) {
+    message = 'Please enter child name above';
+  } else if (!this.yourName_.value) {
+    message = 'Please enter your name above';
   }
-  this.gridOverlay_.style.visibility = visibility;
+
+  if (message) {
+    this.gridOverlay_.style.visibility = 'visible';
+    this.gridOverlay_.style.opacity = 0.7;
+    this.gridOverlay_.textContent = message;
+  } else {
+    this.gridOverlay_.style.visibility = 'hidden';
+    this.gridOverlay_.style.opacity = 0.0;
+  }
 };
 
 
