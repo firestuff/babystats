@@ -87,6 +87,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   inputs.style.height = '40px';
   inputs.style.width = '100%';
   inputs.style.border = 'none';
+  inputs.style.borderRadius = 0;
   inputs.style.padding = '4px';
   inputs.style.backgroundColor = 'rgb(189,21,80)';
   inputs.style.color = 'rgb(248,202,0)';
