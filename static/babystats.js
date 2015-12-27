@@ -94,17 +94,10 @@ BabyStats.prototype.buildStylesheet_ = function() {
   inputs.style.textAlign = 'center';
 
   style.sheet.insertRule(
-      '.babyStatsChildName::-webkit-input-placeholder, ' +
-      '.babyStatsYourName::-webkit-input-placeholder {}', 0);
-  var placeholders = style.sheet.cssRules[0];
-  placeholders.style.color = 'rgba(248,202,0,0.6)';
-
-  style.sheet.insertRule(
       '.babyStatsChildName:focus, ' +
       '.babyStatsYourName:focus {}', 0);
   var focus = style.sheet.cssRules[0];
   focus.style.outline = 'none';
-  focus.style.textDecoration = 'underline';
 
   style.sheet.insertRule('babyStatsGridContainer {}', 0);
   var gridContainer = style.sheet.cssRules[0];
