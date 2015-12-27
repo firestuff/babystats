@@ -18,6 +18,9 @@ var BabyStats = function(container) {
 
   this.buildCells_();
   this.buildStylesheet_();
+
+  window.addEventListener('resize', this.rebuildIfNeeded_.bind(this));
+
   var grid = this.calculateGrid_();
   this.gridWidthCells_ = grid.gridWidthCells;
   this.gridHeightCells_ = grid.gridHeightCells;
@@ -38,7 +41,18 @@ BabyStats.prototype.addCSSClass_ = function(node, className) {
   }
   classes.push(className);
   node.className = classes.join(' ');
-}
+};
+
+
+BabyStats.prototype.rebuildIfNeeded_ = function(e) {
+  var grid = this.calculateGrid_();
+  if (this.gridWidthCells_ != grid.gridWidthCells ||
+      this.gridHeightCells_ != grid.gridHeightCells) {
+    this.gridWidthCells_ = grid.gridWidthCells;
+    this.gridHeightCells_ = grid.gridHeightCells;
+    this.buildGrid_();
+  }
+};
 
 /**
  * Construct our stylesheet and insert it into the DOM.
