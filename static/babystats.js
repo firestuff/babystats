@@ -100,6 +100,16 @@ BabyStats.prototype.buildStylesheet_ = function() {
   var focus = style.sheet.cssRules[0];
   focus.style.outline = 'none';
 
+  style.sheet.insertRule('babyStatsGridOverlay {}', 0);
+  var gridOverlay = style.sheet.cssRules[0];
+  gridOverlay.style.position = 'absolute';
+  gridOverlay.style.top = '80px';
+  gridOverlay.style.left = 0;
+  gridOverlay.style.bottom = 0;
+  gridOverlay.style.right = 0;
+  gridOverlay.style.backgroundColor = 'white';
+  gridOverlay.style.opacity = 0.7;
+
   style.sheet.insertRule('babyStatsGridContainer {}', 0);
   var gridContainer = style.sheet.cssRules[0];
   gridContainer.style.position = 'absolute';
@@ -312,15 +322,33 @@ BabyStats.prototype.buildLayout_ = function() {
   this.childName_ = document.createElement('input');
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
+  this.childName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.container_.appendChild(this.childName_);
 
   this.yourName_ = document.createElement('input');
   this.addCSSClass_(this.yourName_, 'babyStatsYourName');
   this.yourName_.placeholder = 'Your name';
+  this.yourName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.container_.appendChild(this.yourName_);
 
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
   this.container_.appendChild(this.gridContainer_);
+
+  this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
+  this.container_.appendChild(this.gridOverlay_);
+};
+
+
+/**
+ * Make the grid overlay visible/hidden based on input field status.
+ * @private
+ */
+BabyStats.prototype.checkOverlay_ = function() {
+  var visibility = 'visible';
+  if (this.childName_.value && this.yourName_.value) {
+    visibility = 'hidden';
+  }
+  this.gridOverlay_.style.visibility = visibility;
 };
 
 
