@@ -84,7 +84,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   style.sheet.insertRule('.babyStatsChildName, .babyStatsYourName {}', 0);
   var inputs = style.sheet.cssRules[0];
   inputs.style.display = 'block';
-  inputs.style.height = '40px';
+  inputs.style.height = '32px';
   inputs.style.width = '100%';
   inputs.style.border = 'none';
   inputs.style.borderRadius = 0;
