@@ -257,7 +257,9 @@ BabyStats.prototype.onClick_ = function(eventName, overlay) {
     timer--;
     switch (timer) {
       case 0:
-        // XXX: send
+        this.chat_.sendMessage({
+          type: eventName,
+        });
         overlay.textContent = '✓';
         break;
 
