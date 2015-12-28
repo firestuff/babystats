@@ -36,6 +36,10 @@ var BabyStats = function(container) {
 };
 
 
+/**
+ * @param {hogfather.PublicChat} chat
+ * @private
+ */
 BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_ = chat;
 
@@ -52,9 +56,23 @@ BabyStats.prototype.onChatReady_ = function(chat) {
 
   var messages = this.chat_.getMessages();
   messages.forEach(this.handleMessage_.bind(this));
+  this.chat_.addEventListener('message', this.onMessage_.bind(this));
 };
 
 
+/**
+ * @param {Event} e
+ * @private
+ */
+BabyStats.prototype.onMessage_ = function(e) {
+  this.handleMessage_(e.detail);
+};
+
+
+/**
+ * @param {Cosmopolite.typeMessage} message
+ * @private
+ */
 BabyStats.prototype.handleMessage_ = function(message) {
   switch (message.message.type) {
     case 'child_name_change':
@@ -408,6 +426,9 @@ BabyStats.prototype.checkOverlay_ = function() {
 };
 
 
+/**
+ * @private
+ */
 BabyStats.prototype.onChildNameChange_ = function() {
   this.chat_.sendMessage({
     type: 'child_name_change',
