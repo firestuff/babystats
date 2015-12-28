@@ -17,3 +17,9 @@ handlers:
   secure: always
   http_headers:
     X-Content-Type-Options: nosniff
+
+includes:
+- cosmopolite
+
+inbound_services:
+- channel_presence
