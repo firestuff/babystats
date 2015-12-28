@@ -55,7 +55,7 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.buildGrid_();
 
   var messages = this.chat_.getMessages();
-  messages.forEach(this.handleMessage_.bind(this));
+  messages.forEach(this.handleMessage_.bind(this, false));
   this.chat_.addEventListener('message', this.onMessage_.bind(this));
 };
 
@@ -65,18 +65,19 @@ BabyStats.prototype.onChatReady_ = function(chat) {
  * @private
  */
 BabyStats.prototype.onMessage_ = function(e) {
-  this.handleMessage_(e.detail);
+  this.handleMessage_(true, e.detail);
 };
 
 
 /**
+ * @param {Boolean} isEvent
  * @param {Cosmopolite.typeMessage} message
  * @private
  */
-BabyStats.prototype.handleMessage_ = function(message) {
+BabyStats.prototype.handleMessage_ = function(isEvent, message) {
   switch (message.message.type) {
     case 'child_name_change':
-      if (e.detail.sender != this.cosmo_.currentProfile()) {
+      if (!isEvent || message.sender != this.cosmo_.currentProfile()) {
         this.childName_.value = message.message.child_name;
         this.checkOverlay_();
       }
