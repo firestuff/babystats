@@ -65,6 +65,9 @@ BabyStats.prototype.onChatReady_ = function(chat) {
  * @private
  */
 BabyStats.prototype.onMessage_ = function(e) {
+  if (e.detail.sender == this.cosmo_.currentProfile()) {
+    return;
+  }
   this.handleMessage_(e.detail);
 };
 
