@@ -70,7 +70,7 @@ BabyStats.prototype.onMessage_ = function(e) {
 
 
 /**
- * @param {Boolean} isEvent
+ * @param {boolean} isEvent
  * @param {Cosmopolite.typeMessage} message
  * @private
  */
