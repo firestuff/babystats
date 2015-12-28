@@ -56,9 +56,9 @@ BabyStats.prototype.onChatReady_ = function(chat) {
 
 
 BabyStats.prototype.handleMessage_ = function(message) {
-  switch (message.type) {
+  switch (message.message.type) {
     case 'child_name_change':
-      this.childName_.value = message.child_name;
+      this.childName_.value = message.message.child_name;
       this.checkOverlay_();
       break;
     default:
@@ -366,7 +366,6 @@ BabyStats.prototype.buildLayout_ = function() {
   this.childName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.childName_.addEventListener('input', this.onChildNameChange_.bind(this));
   this.container_.appendChild(this.childName_);
-  this.childName_.focus();
 
   this.yourName_ = document.createElement('input');
   this.addCSSClass_(this.yourName_, 'babyStatsYourName');
