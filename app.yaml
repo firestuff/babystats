@@ -13,6 +13,14 @@ handlers:
   http_headers:
     X-Content-Type-Options: nosniff
 
+- url: /baby/.*
+  static_files: static/babystats.html
+  upload: static/babystats.html
+  secure: always
+  login: required
+  http_headers:
+    X-Content-Type-Options: nosniff
+
 - url: /static
   static_dir: static
   secure: always

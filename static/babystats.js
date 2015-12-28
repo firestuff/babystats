@@ -6,6 +6,14 @@
  * @constructor
  */
 var BabyStats = function(container) {
+  var urlRE = new RegExp('^/baby/([-0-9a-f]{36})$');
+  var match = window.location.pathname.match(urlRE);
+  if (!match) {
+    window.location.pathname = '/baby/' + Cosmopolite.uuid();
+    return;
+  }
+  var id = match[1];
+
   this.container_ = container;
 
   this.tileScaleHeight_ = 1;
@@ -24,21 +32,12 @@ var BabyStats = function(container) {
   this.intervals_ = {};
 
   this.cosmo_ = new Cosmopolite();
-  if (window.location.hash) {
-    var id = window.location.hash.substring(1);
-    hogfather.PublicChat.Join(this.cosmo_, id).then(
-        this.onChatReady_.bind(this));
-  } else {
-    hogfather.PublicChat.Create(this.cosmo_).then(
-        this.onChatReady_.bind(this));
-  }
+  hogfather.PublicChat.Join(this.cosmo_, id).then(this.onChatReady_.bind(this));
 };
 
 
 BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_ = chat;
-
-  window.location.hash = this.chat_.getID();
 
   this.buildCells_();
   this.buildStylesheet_();
