@@ -50,6 +50,22 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.gridWidthCells_ = grid.gridWidthCells;
   this.gridHeightCells_ = grid.gridHeightCells;
   this.buildGrid_();
+
+  var messages = this.chat_.getMessages();
+  messages.forEach(this.handleMessage_.bind(this));
+};
+
+
+BabyStats.prototype.handleMessage_ = function(message) {
+  switch (message.type) {
+    case 'child_name_change':
+      this.childName_.value = message.child_name;
+      this.checkOverlay_();
+      break;
+    default:
+      console.log('Unknown message type:', message);
+      break;
+  }
 };
 
 
@@ -347,6 +363,7 @@ BabyStats.prototype.buildLayout_ = function() {
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
   this.childName_.addEventListener('input', this.checkOverlay_.bind(this));
+  this.childName_.addEventListener('input', this.onChildNameChange_.bind(this));
   this.container_.appendChild(this.childName_);
   this.childName_.focus();
 
@@ -388,6 +405,14 @@ BabyStats.prototype.checkOverlay_ = function() {
     this.gridOverlay_.style.visibility = 'hidden';
     this.gridOverlay_.style.opacity = 0.0;
   }
+};
+
+
+BabyStats.prototype.onChildNameChange_ = function() {
+  this.chat_.sendMessage({
+    type: 'child_name_change',
+    child_name: this.childName_.value,
+  });
 };
 
 
