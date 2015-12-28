@@ -23,16 +23,21 @@ var BabyStats = function(container) {
 
   this.intervals_ = {};
 
-  this.buildCells_();
-  this.buildStylesheet_();
-  this.buildLayout_();
+  this.cosmo_ = new Cosmopolite();
+  hogfather.PublicChat.Create(this.cosmo_).then(function(chat) {
+    this.chat_ = chat;
 
-  window.addEventListener('resize', this.rebuildIfNeeded_.bind(this));
+    this.buildCells_();
+    this.buildStylesheet_();
+    this.buildLayout_();
 
-  var grid = this.calculateGrid_();
-  this.gridWidthCells_ = grid.gridWidthCells;
-  this.gridHeightCells_ = grid.gridHeightCells;
-  this.buildGrid_();
+    window.addEventListener('resize', this.rebuildIfNeeded_.bind(this));
+
+    var grid = this.calculateGrid_();
+    this.gridWidthCells_ = grid.gridWidthCells;
+    this.gridHeightCells_ = grid.gridHeightCells;
+    this.buildGrid_();
+  }.bind(this));
 };
 
 
