@@ -65,9 +65,6 @@ BabyStats.prototype.onChatReady_ = function(chat) {
  * @private
  */
 BabyStats.prototype.onMessage_ = function(e) {
-  if (e.detail.sender == this.cosmo_.currentProfile()) {
-    return;
-  }
   this.handleMessage_(e.detail);
 };
 
@@ -79,8 +76,10 @@ BabyStats.prototype.onMessage_ = function(e) {
 BabyStats.prototype.handleMessage_ = function(message) {
   switch (message.message.type) {
     case 'child_name_change':
-      this.childName_.value = message.message.child_name;
-      this.checkOverlay_();
+      if (e.detail.sender != this.cosmo_.currentProfile()) {
+        this.childName_.value = message.message.child_name;
+        this.checkOverlay_();
+      }
       break;
     default:
       console.log('Unknown message type:', message);
