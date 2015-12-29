@@ -133,6 +133,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
           tile2 = this.findTile_(type);
           tile2.canceled = true;
         }.bind(this));
+        this.updateTileStatus_();
       } else {
         console.log('Unknown message type:', message);
       }
@@ -158,6 +159,26 @@ BabyStats.prototype.addCSSClass_ = function(node, className) {
   classes.push(className);
   node.className = classes.join(' ');
 };
+
+
+/**
+ * Remove a CSS class to a node if it has it.
+ * @param {!Node} node Node object to remove class from
+ * @param {!string} className Name of class to remove
+ * @private
+ */
+BabyStats.prototype.removeCSSClass_ = function(node, className) {
+  var classes = node.className.split(' ').filter(function(className) {
+    return className;
+  });
+  var i = classes.indexOf(className);
+  if (i == -1) {
+    // Already doesn't have class.
+    return;
+  }
+  delete classes[i];
+  node.className = classes.join(' ');
+}
 
 
 /**
@@ -245,6 +266,26 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.cellRule_.style.userSelect = 'none';
   this.cellRule_.style.cursor = 'default';
 
+  style.sheet.insertRule('babyStatsCellStatus {}', 0);
+  var statusBox = style.sheet.cssRules[0];
+  statusBox.style.display = 'flex';
+  statusBox.style.position = 'absolute';
+  statusBox.style.bottom = '5px';
+  statusBox.style.right = '5px';
+  statusBox.style.width = '15vmin';
+  statusBox.style.height = '5vmin';
+  statusBox.style.alignItems = 'center';
+  statusBox.style.justifyContent = 'center';
+  statusBox.style.borderTopLeftRadius = '15px';
+  statusBox.style.borderBottomRightRadius = '15px';
+  statusBox.style.backgroundColor = 'rgb(189,21,80)';
+  statusBox.style.color = 'rgb(248,202,0)';
+  statusBox.style.fontSize = '3vmin';
+
+  style.sheet.insertRule('.babyStatsCellStatusActive {}', 0);
+  var statusBoxActive = style.sheet.cssRules[0];
+  statusBoxActive.style.backgroundColor = 'rgb(138,155,15)';
+
   style.sheet.insertRule('babyStatsCellContents {}', 0);
   var contents = style.sheet.cssRules[0];
   contents.style.display = 'flex';
@@ -301,11 +342,15 @@ BabyStats.prototype.buildCells_ = function() {
     contents.textContent = tile.description;
     cell.appendChild(contents);
 
+    tile.statusBox = document.createElement('babyStatsCellStatus');
+    cell.appendChild(tile.statusBox);
+
     var overlay = document.createElement('babyStatsCellOverlay');
     cell.appendChild(overlay);
 
     cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
   }, this);
+  window.setInterval(this.updateTileStatus_.bind(this), 60 * 1000);
 };
 
 
@@ -528,4 +573,43 @@ BabyStats.prototype.buildGrid_ = function() {
     }
     this.gridContainer_.appendChild(row);
   }
+};
+
+
+/**
+ * @private
+ * @param {number} seconds
+ * @return {number}
+ */
+BabyStats.prototype.secondsToHuman_ = function(seconds) {
+  if (seconds > 60 * 60 * 24) {
+    return Math.round(seconds / (60 * 60 * 24)).toString() + 'd';
+  } else if (seconds > 60 * 60) {
+    return Math.round(seconds / (60 * 60)).toString() + 'h';
+  } else {
+    return Math.round(seconds / 60).toString() + 'm';
+  }
+};
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.updateTileStatus_ = function() {
+  var now = Date.now() / 1000;
+  this.tiles_.forEach(function(tile) {
+    if (tile.lastSeen) {
+      var timeSince = now - tile.lastSeen;
+      tile.statusBox.textContent = this.secondsToHuman_(timeSince) + ' ago';
+      var timedOut = tile.timeout && (now - tile.timeout > tile.lastSeen);
+      if (tile.canceled || timedOut) {
+        this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
+      } else {
+        this.addCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
+      }
+    } else {
+      this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
+    }
+  }.bind(this));
+
 };
