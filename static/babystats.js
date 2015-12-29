@@ -103,6 +103,15 @@ BabyStats.prototype.onMessage_ = function(e) {
 
 
 /**
+ * @param {string} type
+ * @private
+ */
+BabyStats.prototype.findTile_ = function(type) {
+  return this.tiles_.find(function(tile) { return tile.type == type; });
+};
+
+
+/**
  * @param {boolean} isEvent
  * @param {Cosmopolite.typeMessage} message
  * @private
@@ -116,7 +125,17 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
       }
       break;
     default:
-      console.log('Unknown message type:', message);
+      var tile = this.findTile_(message.message.type);
+      if (tile) {
+        tile.lastSeen = message.created;
+        tile.canceled = false;
+        (tile.cancels || []).forEach(function(type) {
+          tile2 = this.findTile_(type);
+          tile2.canceled = true;
+        }.bind(this));
+      } else {
+        console.log('Unknown message type:', message);
+      }
       break;
   }
 };
