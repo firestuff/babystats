@@ -20,13 +20,46 @@ var BabyStats = function(container) {
   this.tileScaleWidth_ = 1;
 
   this.tiles_ = [
-    ['asleep', 'Asleep'],
-    ['awake', 'Awake'],
-    ['diaper_feces', 'Diaper change\n(feces)'],
-    ['diaper_urine', 'Diaper change\n(urine only)'],
-    ['feeding_breast', 'Feeding\n(breast)'],
-    ['feeding_bottle_milk', 'Feeding\n(bottled breast milk)'],
-    ['feeding_formula', 'Feeding\n(formula)'],
+    {
+      type: 'asleep',
+      description: 'Asleep',
+      cancels: ['awake'],
+    },
+    {
+      type: 'awake',
+      description: 'Awake',
+      cancels: ['asleep'],
+    },
+    {
+      type: 'diaper_feces',
+      description: 'Diaper change\n(feces)',
+      implies: ['awake'],
+      timeout: 60 * 30,
+    },
+    {
+      type: 'diaper_urine',
+      description: 'Diaper change\n(urine only)',
+      implies: ['awake'],
+      timeout: 60 * 30,
+    },
+    {
+      type: 'feeding_breast',
+      description: 'Feeding\n(breast)',
+      implies: ['awake'],
+      timeout: 60 * 30,
+    },
+    {
+      type: 'feeding_bottle_milk',
+      description: 'Feeding\n(bottled breast milk)',
+      implies: ['awake'],
+      timeout: 60 * 30,
+    },
+    {
+      type: 'feeding_formula',
+      description: 'Feeding\n(formula)',
+      implies: ['awake'],
+      timeout: 60 * 30,
+    },
   ];
 
   this.intervals_ = {};
@@ -241,46 +274,50 @@ BabyStats.prototype.buildStylesheet_ = function() {
  */
 BabyStats.prototype.buildCells_ = function() {
   this.cells_ = [];
-  this.tiles_.forEach(function(tiles) {
+  this.tiles_.forEach(function(tile) {
     var cell = document.createElement('babyStatsCell');
     this.cells_.push(cell);
 
     var contents = document.createElement('babyStatsCellContents');
-    contents.textContent = tiles[1];
+    contents.textContent = tile.description;
     cell.appendChild(contents);
 
     var overlay = document.createElement('babyStatsCellOverlay');
     cell.appendChild(overlay);
 
-    cell.addEventListener('click', this.onClick_.bind(this, tiles[0], overlay));
+    cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
   }, this);
 };
 
 
 /**
  * Handle a click event on a button.
- * @param {string} eventName short name of event to send
+ * @param {Object} tile tile description struct
  * @param {Element} overlay element to make visible with countdown timer
  * @private
  */
-BabyStats.prototype.onClick_ = function(eventName, overlay) {
-  if (this.intervals_[eventName]) {
-    window.clearInterval(this.intervals_[eventName]);
-    delete this.intervals_[eventName];
+BabyStats.prototype.onClick_ = function(tile, overlay) {
+  if (this.intervals_[tile.type]) {
+    window.clearInterval(this.intervals_[tile.type]);
+    delete this.intervals_[tile.type];
     overlay.style.opacity = 0.0;
     return;
   }
   var timer = 5;
   overlay.textContent = timer;
   overlay.style.opacity = 0.5;
-  this.intervals_[eventName] = window.setInterval(function() {
+  this.intervals_[tile.type] = window.setInterval(function() {
     timer--;
     switch (timer) {
       case 0:
-        this.chat_.sendMessage({
-          type: eventName,
-          sender_name: this.yourName_.value,
-        });
+        var types = tile.implies || [];
+        types.push(tile.type);
+        types.forEach(function(type) {
+          this.chat_.sendMessage({
+            type: type,
+            sender_name: this.yourName_.value,
+          });
+        }.bind(this));
         overlay.textContent = '✓';
         break;
 
@@ -288,8 +325,8 @@ BabyStats.prototype.onClick_ = function(eventName, overlay) {
         break;
 
       case -2:
-        window.clearInterval(this.intervals_[eventName]);
-        delete this.intervals_[eventName];
+        window.clearInterval(this.intervals_[tile.type]);
+        delete this.intervals_[tile.type];
         overlay.style.opacity = 0.0;
         break;
 
