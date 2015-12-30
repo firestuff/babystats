@@ -122,7 +122,6 @@ BabyStats.prototype.onLogout_ = function(e) {
 };
 
 
-
 /**
  * @private
  */
@@ -142,6 +141,7 @@ BabyStats.prototype.onMessage_ = function(e) {
 
 /**
  * @param {string} type
+ * @return {Object}
  * @private
  */
 BabyStats.prototype.findTile_ = function(type) {
@@ -224,7 +224,7 @@ BabyStats.prototype.removeCSSClass_ = function(node, className) {
   }
   delete classes[i];
   node.className = classes.join(' ');
-}
+};
 
 
 /**
@@ -590,6 +590,9 @@ BabyStats.prototype.buildLayout_ = function() {
 };
 
 
+/**
+ * @private
+ */
 BabyStats.prototype.requestAccess_ = function() {
   this.chat_.requestAccess(this.yourName_.value);
 };
@@ -705,7 +708,7 @@ BabyStats.prototype.buildGrid_ = function() {
 /**
  * @private
  * @param {number} seconds
- * @return {number}
+ * @return {string}
  */
 BabyStats.prototype.secondsToHuman_ = function(seconds) {
   if (seconds > 60 * 60 * 24) {
@@ -727,7 +730,9 @@ BabyStats.prototype.updateTileStatus_ = function() {
     if (tile.lastSeen) {
       var timeSince = now - tile.lastSeen;
       tile.statusBox.textContent = (
-        timeSince < 60 ? 'just now' : this.secondsToHuman_(timeSince) + ' ago');
+          timeSince < 60 ?
+          'just now' :
+          this.secondsToHuman_(timeSince) + ' ago');
       var timedOut = tile.timeout && (now - tile.timeout > tile.lastSeen);
       if (tile.canceled || timedOut) {
         this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
