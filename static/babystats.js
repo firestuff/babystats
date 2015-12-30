@@ -64,7 +64,12 @@ var BabyStats = function(container) {
 
   this.intervals_ = {};
 
+  this.buildStylesheet_();
+
   this.cosmo_ = new Cosmopolite();
+  this.cosmo_.addEventListener('login', this.onLogin_.bind(this));
+  this.cosmo_.addEventListener('logout', this.onLogout_.bind(this));
+
   this.client_id_ = this.cosmo_.uuid();
   hogfather.PublicChat.Join(this.cosmo_, id).then(this.onChatReady_.bind(this));
 };
@@ -78,7 +83,6 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_ = chat;
 
   this.buildCells_();
-  this.buildStylesheet_();
   this.buildLayout_();
 
   window.addEventListener('resize', this.rebuildIfNeeded_.bind(this));
@@ -94,6 +98,34 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_.addEventListener('request', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('request_denied', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
+};
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+BabyStats.prototype.onLogin_ = function(e) {
+  this.loginRule_.style.visibility = 'hidden';
+};
+
+
+/**
+ * @param {Event} e
+ * @private
+ */
+BabyStats.prototype.onLogout_ = function(e) {
+  this.loginURL_ = e.detail.login_url;
+  this.loginRule_.style.visibility = 'visible';
+};
+
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.onLoginClick_ = function() {
+  window.open(this.loginURL_);
 };
 
 
@@ -229,6 +261,16 @@ BabyStats.prototype.buildStylesheet_ = function() {
       '.babyStatsYourName:focus {}', 0);
   var focus = style.sheet.cssRules[0];
   focus.style.outline = 'none';
+
+  style.sheet.insertRule('.babyStatsLogin {}', 0);
+  this.loginRule_ = style.sheet.cssRules[0];
+  this.loginRule_.style.position = 'absolute';
+  this.loginRule_.style.top = 0;
+  this.loginRule_.style.right = 0;
+  this.loginRule_.style.height = '32px';
+  this.loginRule_.style.width = '32px';
+  this.loginRule_.style.margin = '4px';
+  this.loginRule_.style.visibility = 'hidden';
 
   style.sheet.insertRule('babyStatsGridOverlay {}', 0);
   var gridOverlay = style.sheet.cssRules[0];
@@ -521,6 +563,12 @@ BabyStats.prototype.buildLayout_ = function() {
   this.yourName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.yourName_.addEventListener('input', this.onYourNameChange_.bind(this));
   this.container_.appendChild(this.yourName_);
+
+  var login = document.createElement('img');
+  this.addCSSClass_(login, 'babyStatsLogin');
+  login.src = '/static/google.svg';
+  login.addEventListener('click', this.onLoginClick_.bind(this));
+  this.container_.appendChild(login);
 
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
   this.container_.appendChild(this.gridContainer_);
