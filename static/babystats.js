@@ -107,6 +107,7 @@ BabyStats.prototype.onChatReady_ = function(chat) {
  */
 BabyStats.prototype.onLogin_ = function(e) {
   this.loginRule_.style.visibility = 'hidden';
+  this.checkOverlay_();
 };
 
 
@@ -117,6 +118,7 @@ BabyStats.prototype.onLogin_ = function(e) {
 BabyStats.prototype.onLogout_ = function(e) {
   this.loginURL_ = e.detail.login_url;
   this.loginRule_.style.visibility = 'visible';
+  this.checkOverlay_();
 };
 
 
@@ -153,6 +155,13 @@ BabyStats.prototype.findTile_ = function(type) {
  * @private
  */
 BabyStats.prototype.handleMessage_ = function(isEvent, message) {
+  if (message.message.sender_name &&
+      !this.yourName_.value &&
+      message.sender == this.cosmo_.currentProfile()) {
+    this.yourName_.value = message.message.sender_name;
+    this.checkOverlay_();
+  }
+
   switch (message.message.type) {
     case 'child_name_change':
       if (!isEvent || message.message.client_id != this.client_id_) {
@@ -160,6 +169,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
         this.checkOverlay_();
       }
       break;
+
     default:
       var tile = this.findTile_(message.message.type);
       if (tile) {
@@ -590,6 +600,19 @@ BabyStats.prototype.requestAccess_ = function() {
  * @private
  */
 BabyStats.prototype.checkOverlay_ = function() {
+  if (!this.childName_) {
+    // buildLayout_() hasn't run yet; not much we can do here.
+    return;
+  }
+
+  if (!this.yourName_.value) {
+    this.chat_.getMessages().forEach(function(message) {
+      if (message.sender == this.cosmo_.currentProfile()) {
+        this.yourName_.value = message.message.sender_name;
+      }
+    }.bind(this));
+  }
+
   var message = '', actions = [];
   if (!this.childName_.value) {
     message = 'Please enter child name above';
