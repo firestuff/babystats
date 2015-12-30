@@ -638,11 +638,11 @@ BabyStats.prototype.buildGrid_ = function() {
  */
 BabyStats.prototype.secondsToHuman_ = function(seconds) {
   if (seconds > 60 * 60 * 24) {
-    return Math.round(seconds / (60 * 60 * 24)).toString() + 'd';
+    return Math.floor(seconds / (60 * 60 * 24)).toString() + 'd';
   } else if (seconds > 60 * 60) {
-    return Math.round(seconds / (60 * 60)).toString() + 'h';
+    return Math.floor(seconds / (60 * 60)).toString() + 'h';
   } else {
-    return Math.round(seconds / 60).toString() + 'm';
+    return Math.floor(seconds / 60).toString() + 'm';
   }
 };
 
@@ -655,7 +655,8 @@ BabyStats.prototype.updateTileStatus_ = function() {
   this.tiles_.forEach(function(tile) {
     if (tile.lastSeen) {
       var timeSince = now - tile.lastSeen;
-      tile.statusBox.textContent = this.secondsToHuman_(timeSince) + ' ago';
+      tile.statusBox.textContent = (
+        timeSince < 60 ? 'just now' : this.secondsToHuman_(timeSince) + ' ago');
       var timedOut = tile.timeout && (now - tile.timeout > tile.lastSeen);
       if (tile.canceled || timedOut) {
         this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
