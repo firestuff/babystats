@@ -65,6 +65,7 @@ var BabyStats = function(container) {
   this.intervals_ = {};
 
   this.cosmo_ = new Cosmopolite();
+  this.client_id_ = this.cosmo_.uuid();
   hogfather.PublicChat.Join(this.cosmo_, id).then(this.onChatReady_.bind(this));
 };
 
@@ -122,7 +123,7 @@ BabyStats.prototype.findTile_ = function(type) {
 BabyStats.prototype.handleMessage_ = function(isEvent, message) {
   switch (message.message.type) {
     case 'child_name_change':
-      if (!isEvent || message.sender != this.cosmo_.currentProfile()) {
+      if (!isEvent || message.message.client_id != this.client_id_) {
         this.childName_.value = message.message.child_name;
         this.checkOverlay_();
       }
@@ -591,6 +592,7 @@ BabyStats.prototype.onChildNameChange_ = function() {
   this.chat_.sendMessage({
     type: 'child_name_change',
     child_name: this.childName_.value,
+    client_id: this.client_id_,
   });
 };
 
