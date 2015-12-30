@@ -90,6 +90,9 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   var messages = this.chat_.getMessages();
   messages.forEach(this.handleMessage_.bind(this, false));
   this.chat_.addEventListener('message', this.onMessage_.bind(this));
+  this.chat_.addEventListener('request', this.checkOverlay_.bind(this));
+  this.chat_.addEventListener('request_denied', this.checkOverlay_.bind(this));
+  this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
 };
 
 
@@ -235,13 +238,33 @@ BabyStats.prototype.buildStylesheet_ = function() {
   gridOverlay.style.bottom = 0;
   gridOverlay.style.right = 0;
   gridOverlay.style.alignItems = 'center';
+  gridOverlay.style.flexDirection = 'column';
   gridOverlay.style.justifyContent = 'center';
-  gridOverlay.style.backgroundColor = 'white';
+  gridOverlay.style.backgroundColor = 'rgba(255,255,255,0.7)';
   gridOverlay.style.color = 'rgb(189,21,80)';
   gridOverlay.style.textShadow = '0 0 2px rgb(248,202,0)';
   gridOverlay.style.fontSize = '6vmin';
   gridOverlay.style.fontWeight = 'bold';
   gridOverlay.style.transition = '0.4s';
+
+  style.sheet.insertRule('babyStatsActionButton {}', 0);
+  var actionButton = style.sheet.cssRules[0];
+  actionButton.style.display = 'flex';
+  actionButton.style.minWidth = '35vmin';
+  actionButton.style.padding = '10px';
+  actionButton.style.margin = '5px';
+  actionButton.style.borderRadius = '15px';
+  actionButton.style.alignItems = 'center';
+  actionButton.style.justifyContent = 'center';
+  actionButton.style.backgroundColor = 'rgb(138,155,15)';
+  actionButton.style.color = 'rgb(248,202,0)';
+  actionButton.style.fontSize = '3vmin';
+  actionButton.style.fontWeight = 'normal';
+  actionButton.style.textShadow = 'none';
+  actionButton.style.cursor = 'default';
+  actionButton.style.webkitUserSelect = 'none';
+  actionButton.style.mozUserSelect = 'none';
+  actionButton.style.userSelect = 'none';
 
   style.sheet.insertRule('babyStatsGridContainer {}', 0);
   var gridContainer = style.sheet.cssRules[0];
@@ -508,22 +531,52 @@ BabyStats.prototype.buildLayout_ = function() {
 };
 
 
+BabyStats.prototype.requestAccess_ = function() {
+  this.chat_.requestAccess(this.yourName_.value);
+};
+
+
 /**
  * Make the grid overlay visible/hidden based on input field status.
  * @private
  */
 BabyStats.prototype.checkOverlay_ = function() {
-  var message = '';
+  var message = '', actions = [];
   if (!this.childName_.value) {
     message = 'Please enter child name above';
   } else if (!this.yourName_.value) {
     message = 'Please enter your name above';
+  } else if (!this.chat_.amWriter()) {
+    if (this.chat_.getRequests().some(function(request) {
+      return request.sender == this.cosmo_.currentProfile();
+    }.bind(this))) {
+      message = 'Access request sent.';
+    } else {
+      message = 'You don\'t have permission to interact with this page.';
+      actions.push(['Request Access', this.requestAccess_.bind(this)]);
+    }
+  } else if (this.chat_.amOwner() && this.chat_.getRequests().length) {
+    var request = this.chat_.getRequests()[0];
+    message = 'Access request from "' + request.message.info + '"';
+    actions.push(['Approve as Owner',
+                  this.chat_.addOwner.bind(this.chat_, request.sender)]);
+    actions.push(['Approve as Contributor',
+                  this.chat_.addWriter.bind(this.chat_, request.sender)]);
+    actions.push(['Deny',
+                  this.chat_.denyRequest.bind(this.chat_, request.sender)]);
   }
 
   if (message) {
     this.gridOverlay_.style.visibility = 'visible';
-    this.gridOverlay_.style.opacity = 0.7;
+    this.gridOverlay_.style.opacity = 1.0;
+    this.gridOverlay_.innerHTML = '';
     this.gridOverlay_.textContent = message;
+    actions.forEach(function(action) {
+      var button = document.createElement('babyStatsActionButton');
+      button.textContent = action[0];
+      button.addEventListener('click', action[1]);
+      this.gridOverlay_.appendChild(button);
+    }.bind(this));
   } else {
     this.gridOverlay_.style.visibility = 'hidden';
     this.gridOverlay_.style.opacity = 0.0;
