@@ -784,19 +784,29 @@ BabyStats.prototype.updateDisplayPage_ = function() {
           'never';
     }
 
-    var counts = [0, 0, 0, 0, 0];
+    var timestamps = [[], [], [], [], []];
     tile.messages.forEach(function(message) {
       cutoffs.forEach(function(cutoff, i) {
         var timeSince = now - message.created;
         if (timeSince < cutoff[1]) {
-          counts[i]++;
+          // Sample belongs in this bucket
+          timestamps[i].push(message.created);
         }
       }.bind(this));
     }.bind(this));
 
     cutoffs.forEach(function(cutoff, i) {
-      this.displayEventCountCells_[tile.type][cutoff[0]].textContent =
-        counts[i];
+      var text = timestamps[i].length.toString();
+      if (timestamps[i].length >= 2) {
+        var deltas = [];
+        for (var j = 1; j < timestamps[i].length; j++) {
+          deltas.push(timestamps[i][j] - timestamps[i][j - 1]);
+        }
+        deltas.sort();
+        var median = deltas[Math.floor(deltas.length / 2)];
+        text += '\n⏱' + this.secondsToHuman_(median);
+      }
+      this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
     }.bind(this));
   }.bind(this));
 };
