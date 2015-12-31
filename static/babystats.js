@@ -267,6 +267,40 @@ BabyStats.prototype.buildStylesheet_ = function() {
   var style = document.createElement('style');
   document.head.appendChild(style);
 
+  style.sheet.insertRule('.babyStatsContainer {}', 0);
+  var containerRule = style.sheet.cssRules[0];
+  containerRule.style.backgroundColor = 'white';
+
+  style.sheet.insertRule('babyStatsFlipper {}', 0);
+  this.flipperRule_ = style.sheet.cssRules[0];
+  this.flipperRule_.style.position = 'absolute';
+  this.flipperRule_.style.top = 0;
+  this.flipperRule_.style.left = 0;
+  this.flipperRule_.style.bottom = 0;
+  this.flipperRule_.style.right = 0;
+  this.flipperRule_.style.transition = '0.6s';
+  this.flipperRule_.style.transformStyle = 'preserve-3d';
+
+  style.sheet.insertRule('babyStatsFlipperFront {}', 0);
+  var front = style.sheet.cssRules[0];
+  front.style.position = 'absolute';
+  front.style.top = 0;
+  front.style.left = 0;
+  front.style.bottom = 0;
+  front.style.right = 0;
+  front.style.backfaceVisibility = 'hidden';
+  front.style.zIndex = 2;
+
+  style.sheet.insertRule('babyStatsFlipperBack {}', 0);
+  var front = style.sheet.cssRules[0];
+  front.style.position = 'absolute';
+  front.style.top = 0;
+  front.style.left = 0;
+  front.style.bottom = 0;
+  front.style.right = 0;
+  front.style.backfaceVisibility = 'hidden';
+  front.style.transform = 'rotateY(180deg)';
+
   style.sheet.insertRule('.babyStatsChildName, .babyStatsYourName {}', 0);
   var inputs = style.sheet.cssRules[0];
   inputs.style.display = 'block';
@@ -408,10 +442,6 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.cellOverlayRule_.style.color = 'rgb(189,21,80)';
   this.cellOverlayRule_.style.borderRadius = '15px';
   this.cellOverlayRule_.style.opacity = 0.0;
-
-  style.sheet.insertRule('.babyStatsContainer {}', 0);
-  var containerRule = style.sheet.cssRules[0];
-  containerRule.style.backgroundColor = 'white';
 };
 
 
@@ -575,14 +605,21 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.addCSSClass_(this.container_, 'babyStatsContainer');
 
-  var flipper = document.createElement('div');
+  var flipper = document.createElement('babyStatsFlipper');
+  this.container_.appendChild(flipper);
+
+  var front = document.createElement('babyStatsFlipperFront');
+  flipper.appendChild(front);
+
+  var back = document.createElement('babyStatsFlipperBack');
+  flipper.appendChild(back);
 
   this.childName_ = document.createElement('input');
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
   this.childName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.childName_.addEventListener('input', this.onChildNameChange_.bind(this));
-  this.container_.appendChild(this.childName_);
+  front.appendChild(this.childName_);
 
   this.yourName_ = document.createElement('input');
   this.addCSSClass_(this.yourName_, 'babyStatsYourName');
@@ -590,19 +627,19 @@ BabyStats.prototype.buildLayout_ = function() {
   this.yourName_.value = localStorage.getItem('babyStats:yourName') || '';
   this.yourName_.addEventListener('input', this.checkOverlay_.bind(this));
   this.yourName_.addEventListener('input', this.onYourNameChange_.bind(this));
-  this.container_.appendChild(this.yourName_);
+  front.appendChild(this.yourName_);
 
   var login = document.createElement('img');
   this.addCSSClass_(login, 'babyStatsLogin');
   login.src = '/static/google.svg';
   login.addEventListener('click', this.onLoginClick_.bind(this));
-  this.container_.appendChild(login);
+  front.appendChild(login);
 
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
-  this.container_.appendChild(this.gridContainer_);
+  front.appendChild(this.gridContainer_);
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
-  this.container_.appendChild(this.gridOverlay_);
+  front.appendChild(this.gridOverlay_);
 
   this.checkOverlay_();
 };
