@@ -24,11 +24,13 @@ var BabyStats = function(container) {
       type: 'asleep',
       description: 'Asleep',
       cancels: ['awake'],
+      ignore_duplicates: true,
     },
     {
       type: 'awake',
       description: 'Awake',
       cancels: ['asleep'],
+      ignore_duplicates: true,
     },
     {
       type: 'diaper_feces',
@@ -199,14 +201,18 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
     default:
       var tile = this.findTile_(message.message.type);
       if (tile) {
-        tile.lastSeen = message.created;
-        tile.active = true;
-        (tile.cancels || []).forEach(function(type) {
-          tile2 = this.findTile_(type);
-          tile2.active = false;
-        }.bind(this));
-        this.updateTileStatus_();
-        this.updateDisplayPage_();
+        if (tile.ignore_duplicates && tile.active) {
+          // Ignore.
+        } else {
+          tile.lastSeen = message.created;
+          tile.active = true;
+          (tile.cancels || []).forEach(function(type) {
+            tile2 = this.findTile_(type);
+            tile2.active = false;
+          }.bind(this));
+          this.updateTileStatus_();
+          this.updateDisplayPage_();
+        }
       } else {
         console.log('Unknown message type:', message);
       }
