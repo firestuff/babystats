@@ -307,6 +307,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.gridOverlayRule_.style.alignItems = 'center';
   this.gridOverlayRule_.style.flexDirection = 'column';
   this.gridOverlayRule_.style.justifyContent = 'center';
+  this.gridOverlayRule_.style.textAlign = 'center';
   this.gridOverlayRule_.style.backgroundColor = 'rgba(255,255,255,0.7)';
   this.gridOverlayRule_.style.color = 'rgb(189,21,80)';
   this.gridOverlayRule_.style.textShadow = '0 0 2px rgb(248,202,0)';
@@ -411,8 +412,6 @@ BabyStats.prototype.buildStylesheet_ = function() {
   style.sheet.insertRule('.babyStatsContainer {}', 0);
   var containerRule = style.sheet.cssRules[0];
   containerRule.style.backgroundColor = 'white';
-
-  this.addCSSClass_(this.container_, 'babyStatsContainer');
 };
 
 
@@ -574,6 +573,10 @@ BabyStats.prototype.buildLayout_ = function() {
   // Allows loading screen to be embedded in the style tag.
   this.container_.removeAttribute('style');
 
+  this.addCSSClass_(this.container_, 'babyStatsContainer');
+
+  var flipper = document.createElement('div');
+
   this.childName_ = document.createElement('input');
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
@@ -625,7 +628,8 @@ BabyStats.prototype.checkOverlay_ = function() {
 
   if (!this.yourName_.value) {
     this.chat_.getMessages().forEach(function(message) {
-      if (message.sender == this.cosmo_.currentProfile()) {
+      if (message.message.sender_name &&
+          message.sender == this.cosmo_.currentProfile()) {
         this.yourName_.value = message.message.sender_name;
       }
     }.bind(this));
