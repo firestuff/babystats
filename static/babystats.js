@@ -185,6 +185,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
         this.checkOverlay_();
       }
       document.title = message.message.child_name;
+      this.displayChildName_.textContent = message.message.child_name;
       break;
 
     default:
@@ -324,6 +325,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   front.style.backfaceVisibility = 'hidden';
   front.style.transform = 'rotateY(180deg)';
 
+  // Front side
   style.sheet.insertRule('.babyStatsChildName, .babyStatsYourName {}', 0);
   var inputs = style.sheet.cssRules[0];
   inputs.style.display = 'block';
@@ -466,6 +468,14 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.cellOverlayRule_.style.color = 'rgb(189,21,80)';
   this.cellOverlayRule_.style.borderRadius = '15px';
   this.cellOverlayRule_.style.opacity = 0.0;
+
+  // Back side
+
+  style.sheet.insertRule('babyStatsDisplayChildName {}', 0);
+  var displayChildName = style.sheet.cssRules[0];
+  displayChildName.style.fontSize = '5vw';
+  displayChildName.style.fontWeight = 'bold';
+  displayChildName.style.color = 'rgb(138,155,15)';
 };
 
 
@@ -636,8 +646,12 @@ BabyStats.prototype.buildLayout_ = function() {
   flipper.appendChild(front);
 
   var back = document.createElement('babyStatsFlipperBack');
+  back.style.display = 'block';
+  back.style.textAlign = 'center';
+  back.style.padding = '15px';
   flipper.appendChild(back);
 
+  // Front (writable) side
   this.childName_ = document.createElement('input');
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
@@ -664,6 +678,10 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   front.appendChild(this.gridOverlay_);
+
+  // Back (read-only) side
+  this.displayChildName_ = document.createElement('babyStatsDisplayChildName');
+  back.appendChild(this.displayChildName_);
 
   var flip = document.createElement('img');
   this.addCSSClass_(flip, 'babyStatsFlip');
