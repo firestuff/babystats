@@ -206,6 +206,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
         } else {
           tile.lastSeen = message.created;
           tile.active = true;
+          tile.messages.push(message);
           (tile.cancels || []).forEach(function(type) {
             tile2 = this.findTile_(type);
             tile2.active = false;
@@ -325,6 +326,7 @@ BabyStats.prototype.buildCells_ = function() {
   this.cells_ = [];
   this.tiles_.forEach(function(tile) {
     tile.active = false;
+    tile.messages = [];
 
     var cell = document.createElement('babyStatsCell');
     this.cells_.push(cell);
