@@ -135,6 +135,18 @@ BabyStats.prototype.onLoginClick_ = function() {
 
 
 /**
+ * @private
+ */
+BabyStats.prototype.onFlipClick_ = function() {
+  if (this.flipperRule_.style.transform) {
+    this.flipperRule_.style.transform = null;
+  } else {
+    this.flipperRule_.style.transform = 'rotateY(180deg)';
+  }
+};
+
+
+/**
  * @param {Event} e
  * @private
  */
@@ -256,6 +268,7 @@ BabyStats.prototype.rebuildIfNeeded_ = function(e) {
 BabyStats.prototype.setTransitions_ = function() {
   this.gridOverlayRule_.style.transition = '0.4s';
   this.cellOverlayRule_.style.transition = '0.4s';
+  this.flipperRule_.style.transition = '1.0s';
 };
 
 
@@ -272,6 +285,16 @@ BabyStats.prototype.buildStylesheet_ = function() {
   var containerRule = style.sheet.cssRules[0];
   containerRule.style.backgroundColor = 'white';
 
+  style.sheet.insertRule('.babyStatsFlip {}', 0);
+  var flip = style.sheet.cssRules[0];
+  flip.style.position = 'absolute';
+  flip.style.top = 0;
+  flip.style.left = 0;
+  flip.style.height = '32px';
+  flip.style.width = '32px';
+  flip.style.margin = '4px';
+  flip.style.cursor = 'pointer';
+
   style.sheet.insertRule('babyStatsFlipper {}', 0);
   this.flipperRule_ = style.sheet.cssRules[0];
   this.flipperRule_.style.position = 'absolute';
@@ -279,7 +302,6 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.flipperRule_.style.left = 0;
   this.flipperRule_.style.bottom = 0;
   this.flipperRule_.style.right = 0;
-  this.flipperRule_.style.transition = '0.6s';
   this.flipperRule_.style.transformStyle = 'preserve-3d';
 
   style.sheet.insertRule('babyStatsFlipperFront {}', 0);
@@ -329,6 +351,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.loginRule_.style.height = '32px';
   this.loginRule_.style.width = '32px';
   this.loginRule_.style.margin = '4px';
+  this.loginRule_.style.cursor = 'pointer';
   this.loginRule_.style.visibility = 'hidden';
 
   style.sheet.insertRule('babyStatsGridOverlay {}', 0);
@@ -363,7 +386,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   actionButton.style.fontSize = '3vmin';
   actionButton.style.fontWeight = 'normal';
   actionButton.style.textShadow = 'none';
-  actionButton.style.cursor = 'default';
+  actionButton.style.cursor = 'pointer';
   actionButton.style.webkitUserSelect = 'none';
   actionButton.style.mozUserSelect = 'none';
   actionButton.style.userSelect = 'none';
@@ -389,7 +412,7 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.cellRule_.style.webkitUserSelect = 'none';
   this.cellRule_.style.mozUserSelect = 'none';
   this.cellRule_.style.userSelect = 'none';
-  this.cellRule_.style.cursor = 'default';
+  this.cellRule_.style.cursor = 'pointer';
 
   style.sheet.insertRule('babyStatsCellStatus {}', 0);
   var statusBox = style.sheet.cssRules[0];
@@ -641,6 +664,12 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   front.appendChild(this.gridOverlay_);
+
+  var flip = document.createElement('img');
+  this.addCSSClass_(flip, 'babyStatsFlip');
+  flip.src = '/static/flip.svg';
+  flip.addEventListener('click', this.onFlipClick_.bind(this));
+  this.container_.appendChild(flip);
 
   this.checkOverlay_();
 };
