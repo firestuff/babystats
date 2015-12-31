@@ -92,6 +92,11 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.gridHeightCells_ = grid.gridHeightCells;
   this.buildGrid_();
 
+  if (!this.chat_.amWriter()) {
+    // Start on back side if we're read-only.
+    this.flipperRule_.style.transform = 'rotateY(180deg)';
+  }
+
   var messages = this.chat_.getMessages();
   messages.forEach(this.handleMessage_.bind(this, false));
   this.chat_.addEventListener('message', this.onMessage_.bind(this));
