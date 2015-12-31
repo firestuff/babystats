@@ -795,10 +795,8 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     }.bind(this));
 
     cutoffs.forEach(function(cutoff, i) {
-      var hours = cutoff[1] / (60 * 60);
-      var perHour = Math.round((counts[i] / hours) * 100) / 100;
       this.displayEventCountCells_[tile.type][cutoff[0]].textContent =
-        counts[i] + '\n(' + perHour + '/hour)';
+        counts[i];
     }.bind(this));
   }.bind(this));
 };
