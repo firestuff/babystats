@@ -104,6 +104,8 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_.addEventListener('request_denied', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
 
+  this.updateTileStatus_();
+
   // Cheap hack to get the DOM to render by yielding before we turn on
   // transitions.
   window.setTimeout(this.setTransitions_.bind(this), 0);
@@ -849,6 +851,7 @@ BabyStats.prototype.updateTileStatus_ = function() {
         this.addCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
       }
     } else {
+      tile.statusBox.textContent = 'never';
       this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
     }
   }.bind(this));
