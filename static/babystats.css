@@ -10,3 +10,185 @@ body {
   bottom: 0;
   right: 0;
 }
+
+.babyStatsContainer {
+  background-color: white;
+}
+
+.babyStatsFlip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 32px;
+  width: 32px;
+  margin: 4px;
+  cursor: pointer;
+}
+
+babyStatsFlipper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  transform-style: preserve-3d;
+}
+
+babyStatsFlipperFront {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  backface-visibility: hidden;
+  z-index: 2;
+}
+
+babyStatsFlipperBack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.babyStatsChildName, .babyStatsYourName {
+  display: block;
+  height: 32px;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  padding: 4px;
+  background-color: rgb(189,21,80);
+  color: rgb(248,202,0);
+  font-size: 28px;
+  text-align: center;
+}
+
+.babyStatsChildName:focus, .babyStatsYourName:focus {
+  outline: none;
+}
+
+.babyStatsLogin {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 32px;
+  width: 32px;
+  margin: 4px;
+  cursor: pointer;
+}
+
+babyStatsGridOverlay {
+  display: flex;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background-color: rgba(255,255,255,0.7);
+  color: rgb(189,21,80);
+  text-shadow: 0 0 2px rgb(248,202,0);
+  font-size: 6vmin;
+  font-weight: bold;
+}
+
+babyStatsGridContainer {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+babyStatsRow {
+  display: block;
+  text-align: center;
+}
+
+babyStatsCell {
+  display: inline-block;
+  position: relative;
+  height: 100%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+babyStatsCellStatus {
+  display: flex;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 15vmin;
+  height: 5vmin;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-color: rgb(189,21,80);
+  color: rgb(248,202,0);
+  font-size: 3vmin;
+}
+
+.babyStatsCellStatusActive {
+  background-color: rgb(138,155,15);
+}
+
+babyStatsCellContents {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  padding: 5px;
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+  font-size: 6vmin;
+  font-weight: bold;
+  white-space: pre-line;
+  background-color: rgb(73,10,61);
+  color: rgb(233,127,2);
+  border-radius: 15px;
+}
+
+babyStatsCellOverlay {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  font-size: 20vmin;
+  font-weight: bold;
+  background-color: rgb(255,255,255);
+  color: rgb(189,21,80);
+  border-radius: 15px;
+  opacity: 0.0;
+}
+
+babyStatsDisplayChildName {
+  display: block;
+  font-size: 5vw;
+  font-weight: bold;
+  color: rgb(138,155,15);
+}
+
+babyStatsDisplaySleepSummary {
+  display: block;
+  font-size: 2vw;
+  color: rgb(73,10,61);
+  visibility: hidden;
+}
+
+babyStatsDisplaySleepStatus, babyStatsDisplaySleepDuration {
+  font-weight: bold;
+}

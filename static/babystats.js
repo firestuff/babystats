@@ -105,6 +105,7 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
 
   this.updateTileStatus_();
+  this.updateDisplayPage_();
 
   // Cheap hack to get the DOM to render by yielding before we turn on
   // transitions.
@@ -199,12 +200,13 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
       var tile = this.findTile_(message.message.type);
       if (tile) {
         tile.lastSeen = message.created;
-        tile.canceled = false;
+        tile.active = true;
         (tile.cancels || []).forEach(function(type) {
           tile2 = this.findTile_(type);
-          tile2.canceled = true;
+          tile2.active = false;
         }.bind(this));
         this.updateTileStatus_();
+        this.updateDisplayPage_();
       } else {
         console.log('Unknown message type:', message);
       }
@@ -281,6 +283,17 @@ BabyStats.prototype.setTransitions_ = function() {
 
 
 /**
+ * @private
+ * @param {Element} stylesheet
+ * @param {string} selector
+ */
+BabyStats.prototype.addStyle_ = function(stylesheet, selector) {
+  stylesheet.sheet.insertRule(selector + ' {}', 0);
+  return stylesheet.sheet.cssRules[0];
+};
+
+
+/**
  * Construct our stylesheet and insert it into the DOM.
  * @private
  */
@@ -289,200 +302,12 @@ BabyStats.prototype.buildStylesheet_ = function() {
   var style = document.createElement('style');
   document.head.appendChild(style);
 
-  style.sheet.insertRule('.babyStatsContainer {}', 0);
-  var containerRule = style.sheet.cssRules[0];
-  containerRule.style.backgroundColor = 'white';
-
-  style.sheet.insertRule('.babyStatsFlip {}', 0);
-  var flip = style.sheet.cssRules[0];
-  flip.style.position = 'absolute';
-  flip.style.top = 0;
-  flip.style.left = 0;
-  flip.style.height = '32px';
-  flip.style.width = '32px';
-  flip.style.margin = '4px';
-  flip.style.cursor = 'pointer';
-
-  style.sheet.insertRule('babyStatsFlipper {}', 0);
-  this.flipperRule_ = style.sheet.cssRules[0];
-  this.flipperRule_.style.position = 'absolute';
-  this.flipperRule_.style.top = 0;
-  this.flipperRule_.style.left = 0;
-  this.flipperRule_.style.bottom = 0;
-  this.flipperRule_.style.right = 0;
-  this.flipperRule_.style.transformStyle = 'preserve-3d';
-
-  style.sheet.insertRule('babyStatsFlipperFront {}', 0);
-  var front = style.sheet.cssRules[0];
-  front.style.position = 'absolute';
-  front.style.top = 0;
-  front.style.left = 0;
-  front.style.bottom = 0;
-  front.style.right = 0;
-  front.style.backfaceVisibility = 'hidden';
-  front.style.zIndex = 2;
-
-  style.sheet.insertRule('babyStatsFlipperBack {}', 0);
-  var front = style.sheet.cssRules[0];
-  front.style.position = 'absolute';
-  front.style.top = 0;
-  front.style.left = 0;
-  front.style.bottom = 0;
-  front.style.right = 0;
-  front.style.backfaceVisibility = 'hidden';
-  front.style.transform = 'rotateY(180deg)';
-
-  // Front side
-  style.sheet.insertRule('.babyStatsChildName, .babyStatsYourName {}', 0);
-  var inputs = style.sheet.cssRules[0];
-  inputs.style.display = 'block';
-  inputs.style.height = '32px';
-  inputs.style.width = '100%';
-  inputs.style.border = 'none';
-  inputs.style.borderRadius = 0;
-  inputs.style.padding = '4px';
-  inputs.style.backgroundColor = 'rgb(189,21,80)';
-  inputs.style.color = 'rgb(248,202,0)';
-  inputs.style.fontSize = '28px';
-  inputs.style.textAlign = 'center';
-
-  style.sheet.insertRule(
-      '.babyStatsChildName:focus, ' +
-      '.babyStatsYourName:focus {}', 0);
-  var focus = style.sheet.cssRules[0];
-  focus.style.outline = 'none';
-
-  style.sheet.insertRule('.babyStatsLogin {}', 0);
-  this.loginRule_ = style.sheet.cssRules[0];
-  this.loginRule_.style.position = 'absolute';
-  this.loginRule_.style.top = 0;
-  this.loginRule_.style.right = 0;
-  this.loginRule_.style.height = '32px';
-  this.loginRule_.style.width = '32px';
-  this.loginRule_.style.margin = '4px';
-  this.loginRule_.style.cursor = 'pointer';
-  this.loginRule_.style.visibility = 'hidden';
-
-  style.sheet.insertRule('babyStatsGridOverlay {}', 0);
-  this.gridOverlayRule_ = style.sheet.cssRules[0];
-  this.gridOverlayRule_.style.display = 'flex';
-  this.gridOverlayRule_.style.position = 'absolute';
-  this.gridOverlayRule_.style.top = '80px';
-  this.gridOverlayRule_.style.left = 0;
-  this.gridOverlayRule_.style.bottom = 0;
-  this.gridOverlayRule_.style.right = 0;
-  this.gridOverlayRule_.style.alignItems = 'center';
-  this.gridOverlayRule_.style.flexDirection = 'column';
-  this.gridOverlayRule_.style.justifyContent = 'center';
-  this.gridOverlayRule_.style.textAlign = 'center';
-  this.gridOverlayRule_.style.backgroundColor = 'rgba(255,255,255,0.7)';
-  this.gridOverlayRule_.style.color = 'rgb(189,21,80)';
-  this.gridOverlayRule_.style.textShadow = '0 0 2px rgb(248,202,0)';
-  this.gridOverlayRule_.style.fontSize = '6vmin';
-  this.gridOverlayRule_.style.fontWeight = 'bold';
-
-  style.sheet.insertRule('babyStatsActionButton {}', 0);
-  var actionButton = style.sheet.cssRules[0];
-  actionButton.style.display = 'flex';
-  actionButton.style.minWidth = '35vmin';
-  actionButton.style.padding = '10px';
-  actionButton.style.margin = '5px';
-  actionButton.style.borderRadius = '15px';
-  actionButton.style.alignItems = 'center';
-  actionButton.style.justifyContent = 'center';
-  actionButton.style.backgroundColor = 'rgb(138,155,15)';
-  actionButton.style.color = 'rgb(248,202,0)';
-  actionButton.style.fontSize = '3vmin';
-  actionButton.style.fontWeight = 'normal';
-  actionButton.style.textShadow = 'none';
-  actionButton.style.cursor = 'pointer';
-  actionButton.style.webkitUserSelect = 'none';
-  actionButton.style.mozUserSelect = 'none';
-  actionButton.style.userSelect = 'none';
-
-  style.sheet.insertRule('babyStatsGridContainer {}', 0);
-  var gridContainer = style.sheet.cssRules[0];
-  gridContainer.style.position = 'absolute';
-  gridContainer.style.top = '80px';
-  gridContainer.style.left = 0;
-  gridContainer.style.bottom = 0;
-  gridContainer.style.right = 0;
-
-  style.sheet.insertRule('babyStatsRow {}', 0);
-  this.rowRule_ = style.sheet.cssRules[0];
-  this.rowRule_.style.display = 'block';
-  this.rowRule_.style.textAlign = 'center';
-
-  style.sheet.insertRule('babyStatsCell {}', 0);
-  this.cellRule_ = style.sheet.cssRules[0];
-  this.cellRule_.style.display = 'inline-block';
-  this.cellRule_.style.position = 'relative';
-  this.cellRule_.style.height = '100%';
-  this.cellRule_.style.webkitUserSelect = 'none';
-  this.cellRule_.style.mozUserSelect = 'none';
-  this.cellRule_.style.userSelect = 'none';
-  this.cellRule_.style.cursor = 'pointer';
-
-  style.sheet.insertRule('babyStatsCellStatus {}', 0);
-  var statusBox = style.sheet.cssRules[0];
-  statusBox.style.display = 'flex';
-  statusBox.style.position = 'absolute';
-  statusBox.style.bottom = '5px';
-  statusBox.style.right = '5px';
-  statusBox.style.width = '15vmin';
-  statusBox.style.height = '5vmin';
-  statusBox.style.alignItems = 'center';
-  statusBox.style.justifyContent = 'center';
-  statusBox.style.borderTopLeftRadius = '15px';
-  statusBox.style.borderBottomRightRadius = '15px';
-  statusBox.style.backgroundColor = 'rgb(189,21,80)';
-  statusBox.style.color = 'rgb(248,202,0)';
-  statusBox.style.fontSize = '3vmin';
-
-  style.sheet.insertRule('.babyStatsCellStatusActive {}', 0);
-  var statusBoxActive = style.sheet.cssRules[0];
-  statusBoxActive.style.backgroundColor = 'rgb(138,155,15)';
-
-  style.sheet.insertRule('babyStatsCellContents {}', 0);
-  var contents = style.sheet.cssRules[0];
-  contents.style.display = 'flex';
-  contents.style.position = 'absolute';
-  contents.style.alignItems = 'center';
-  contents.style.justifyContent = 'center';
-  contents.style.margin = '5px';
-  contents.style.padding = '5px';
-  contents.style.height = 'calc(100% - 20px)';
-  contents.style.width = 'calc(100% - 20px)';
-  contents.style.fontSize = '6vmin';
-  contents.style.fontWeight = 'bold';
-  contents.style.whiteSpace = 'pre-line';
-  contents.style.backgroundColor = 'rgb(73,10,61)';
-  contents.style.color = 'rgb(233,127,2)';
-  contents.style.borderRadius = '15px';
-
-  style.sheet.insertRule('babyStatsCellOverlay {}', 0);
-  this.cellOverlayRule_ = style.sheet.cssRules[0];
-  this.cellOverlayRule_.style.display = 'flex';
-  this.cellOverlayRule_.style.position = 'absolute';
-  this.cellOverlayRule_.style.alignItems = 'center';
-  this.cellOverlayRule_.style.justifyContent = 'center';
-  this.cellOverlayRule_.style.margin = '5px';
-  this.cellOverlayRule_.style.height = 'calc(100% - 10px)';
-  this.cellOverlayRule_.style.width = 'calc(100% - 10px)';
-  this.cellOverlayRule_.style.fontSize = '20vmin';
-  this.cellOverlayRule_.style.fontWeight = 'bold';
-  this.cellOverlayRule_.style.backgroundColor = 'rgb(255,255,255)';
-  this.cellOverlayRule_.style.color = 'rgb(189,21,80)';
-  this.cellOverlayRule_.style.borderRadius = '15px';
-  this.cellOverlayRule_.style.opacity = 0.0;
-
-  // Back side
-
-  style.sheet.insertRule('babyStatsDisplayChildName {}', 0);
-  var displayChildName = style.sheet.cssRules[0];
-  displayChildName.style.fontSize = '5vw';
-  displayChildName.style.fontWeight = 'bold';
-  displayChildName.style.color = 'rgb(138,155,15)';
+  this.flipperRule_ = this.addStyle_(style, 'babyStatsFlipper');
+  this.loginRule_ = this.addStyle_(style, '.babyStatsLogin');
+  this.gridOverlayRule_ = this.addStyle_(style, 'babyStatsGridOverlay');
+  this.rowRule_ = this.addStyle_(style, 'babyStatsRow');
+  this.cellRule_ = this.addStyle_(style, 'babyStatsCell');
+  this.cellOverlayRule_ = this.addStyle_(style, 'babyStatsCellOverlay');
 };
 
 
@@ -493,6 +318,8 @@ BabyStats.prototype.buildStylesheet_ = function() {
 BabyStats.prototype.buildCells_ = function() {
   this.cells_ = [];
   this.tiles_.forEach(function(tile) {
+    tile.active = false;
+
     var cell = document.createElement('babyStatsCell');
     this.cells_.push(cell);
 
@@ -690,6 +517,15 @@ BabyStats.prototype.buildLayout_ = function() {
   this.displayChildName_ = document.createElement('babyStatsDisplayChildName');
   back.appendChild(this.displayChildName_);
 
+  this.displaySleepSummary_ = document.createElement('babyStatsDisplaySleepSummary');
+  back.appendChild(this.displaySleepSummary_);
+  this.displaySleepSummary_.appendChild(document.createTextNode('has been '));
+  this.displaySleepStatus_ = document.createElement('babyStatsDisplaySleepStatus');
+  this.displaySleepSummary_.appendChild(this.displaySleepStatus_);
+  this.displaySleepSummary_.appendChild(document.createTextNode(' for '));
+  this.displaySleepDuration_ = document.createElement('babyStatsDisplaySleepDuration');
+  this.displaySleepSummary_.appendChild(this.displaySleepDuration_);
+
   var flip = document.createElement('img');
   this.addCSSClass_(flip, 'babyStatsFlip');
   flip.src = '/static/flip.svg';
@@ -845,7 +681,7 @@ BabyStats.prototype.updateTileStatus_ = function() {
           'just now' :
           this.secondsToHuman_(timeSince) + ' ago');
       var timedOut = tile.timeout && (now - tile.timeout > tile.lastSeen);
-      if (tile.canceled || timedOut) {
+      if (!tile.active || timedOut) {
         this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
       } else {
         this.addCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
@@ -855,5 +691,27 @@ BabyStats.prototype.updateTileStatus_ = function() {
       this.removeCSSClass_(tile.statusBox, 'babyStatsCellStatusActive');
     }
   }.bind(this));
+};
 
+
+/**
+ * @private
+ */
+BabyStats.prototype.updateDisplayPage_ = function() {
+  var asleep = this.findTile_('asleep');
+  var awake = this.findTile_('awake');
+  if (asleep.active || awake.active) {
+    this.displaySleepSummary_.style.visibility = 'visible';
+    if (asleep.active) {
+      this.displaySleepStatus_.textContent = 'asleep';
+      var timeSince = Date.now() / 1000 - asleep.lastSeen;
+      this.displaySleepDuration_.textContent = this.secondsToHuman_(timeSince);
+    } else {
+      this.displaySleepStatus_.textContent = 'awake';
+      var timeSince = Date.now() / 1000 - awake.lastSeen;
+      this.displaySleepDuration_.textContent = this.secondsToHuman_(timeSince);
+    }
+  } else {
+    this.displaySleepSummary_.style.visibility = 'hidden';
+  }
 };
