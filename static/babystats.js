@@ -172,6 +172,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
         this.childName_.value = message.message.child_name;
         this.checkOverlay_();
       }
+      document.title = message.message.child_name;
       break;
 
     default:
