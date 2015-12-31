@@ -336,6 +336,7 @@ BabyStats.prototype.buildCells_ = function() {
     cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
   }, this);
   window.setInterval(this.updateTileStatus_.bind(this), 60 * 1000);
+  window.setInterval(this.updateDisplayPage_.bind(this), 60 * 1000);
 };
 
 
