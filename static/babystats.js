@@ -202,7 +202,9 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
       var tile = this.findTile_(message.message.type);
       if (tile) {
         if (tile.ignore_duplicates && tile.active) {
-          // Ignore.
+          // Ignore (double trigger of a state-based tile)
+        } else if (tile.active && message.created - tile.lastSeen < 60) {
+          // Ignore (too fast repetition)
         } else {
           tile.lastSeen = message.created;
           tile.active = true;
