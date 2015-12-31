@@ -305,7 +305,6 @@ BabyStats.prototype.addStyle_ = function(stylesheet, selector) {
  * @private
  */
 BabyStats.prototype.buildStylesheet_ = function() {
-  // http://www.colourlovers.com/palette/848743/(%E2%97%95_%E2%80%9D_%E2%97%95)
   var style = document.createElement('style');
   document.head.appendChild(style);
 
@@ -489,9 +488,6 @@ BabyStats.prototype.buildLayout_ = function() {
   flipper.appendChild(front);
 
   var back = document.createElement('babyStatsFlipperBack');
-  back.style.display = 'block';
-  back.style.textAlign = 'center';
-  back.style.padding = '15px';
   flipper.appendChild(back);
 
   // Front (writable) side
@@ -526,14 +522,56 @@ BabyStats.prototype.buildLayout_ = function() {
   this.displayChildName_ = document.createElement('babyStatsDisplayChildName');
   back.appendChild(this.displayChildName_);
 
-  this.displaySleepSummary_ = document.createElement('babyStatsDisplaySleepSummary');
+  this.displaySleepSummary_ =
+      document.createElement('babyStatsDisplaySleepSummary');
   back.appendChild(this.displaySleepSummary_);
   this.displaySleepSummary_.appendChild(document.createTextNode('has been '));
-  this.displaySleepStatus_ = document.createElement('babyStatsDisplaySleepStatus');
+  this.displaySleepStatus_ =
+      document.createElement('babyStatsDisplaySleepStatus');
   this.displaySleepSummary_.appendChild(this.displaySleepStatus_);
   this.displaySleepSummary_.appendChild(document.createTextNode(' for '));
-  this.displaySleepDuration_ = document.createElement('babyStatsDisplaySleepDuration');
+  this.displaySleepDuration_ =
+      document.createElement('babyStatsDisplaySleepDuration');
   this.displaySleepSummary_.appendChild(this.displaySleepDuration_);
+
+  var displayEventCounts =
+      document.createElement('babyStatsDisplayEventCounts');
+  back.appendChild(displayEventCounts);
+  var eventCountHeader =
+      document.createElement('babyStatsDisplayEventCountHeader');
+  displayEventCounts.appendChild(eventCountHeader);
+  eventCountHeader.appendChild(
+      document.createElement('babyStatsDisplayEventCountSpacer'));
+  var columns = [
+    'Most recent',
+    'Past 6h',
+    'Past 24h',
+    'Past 7d',
+    'Past 30d',
+    'All time',
+  ];
+  columns.forEach(function(column) {
+    var headerCell =
+        document.createElement('babyStatsDisplayEventCountHeaderTitle');
+    headerCell.textContent = column;
+    eventCountHeader.appendChild(headerCell);
+  }.bind(this));
+
+  this.displayEventCountCells_ = {};
+  this.tiles_.forEach(function(tile) {
+    var group = document.createElement('babyStatsDisplayEventCountGroup');
+    displayEventCounts.appendChild(group);
+    var groupTitle = document.createElement('babyStatsDisplayEventCountTitle');
+    groupTitle.textContent = tile.description;
+    group.appendChild(groupTitle);
+
+    this.displayEventCountCells_[tile.type] = {};
+    columns.forEach(function(column) {
+      var value = document.createElement('babyStatsDisplayEventCountValue');
+      group.appendChild(value);
+      this.displayEventCountCells_[tile.type][column] = value;
+    }.bind(this));
+  }.bind(this));
 
   var flip = document.createElement('img');
   this.addCSSClass_(flip, 'babyStatsFlip');
@@ -707,20 +745,58 @@ BabyStats.prototype.updateTileStatus_ = function() {
  * @private
  */
 BabyStats.prototype.updateDisplayPage_ = function() {
+  var now = Date.now() / 1000;
+
   var asleep = this.findTile_('asleep');
   var awake = this.findTile_('awake');
   if (asleep.active || awake.active) {
     this.displaySleepSummary_.style.visibility = 'visible';
     if (asleep.active) {
       this.displaySleepStatus_.textContent = 'asleep';
-      var timeSince = Date.now() / 1000 - asleep.lastSeen;
+      var timeSince = now - asleep.lastSeen;
       this.displaySleepDuration_.textContent = this.secondsToHuman_(timeSince);
     } else {
       this.displaySleepStatus_.textContent = 'awake';
-      var timeSince = Date.now() / 1000 - awake.lastSeen;
+      var timeSince = now - awake.lastSeen;
       this.displaySleepDuration_.textContent = this.secondsToHuman_(timeSince);
     }
   } else {
     this.displaySleepSummary_.style.visibility = 'hidden';
   }
+
+  var cutoffs = [
+    ['Past 6h', 6 * 60 * 60],
+    ['Past 24h', 24 * 60 * 60],
+    ['Past 7d', 7 * 24 * 60 * 60],
+    ['Past 30d', 30 * 24 * 60 * 60],
+    ['All time', Number.MAX_VALUE],
+  ];
+
+  this.tiles_.forEach(function(tile) {
+    if (tile.lastSeen) {
+      var timeSince = now - tile.lastSeen;
+      this.displayEventCountCells_[tile.type]['Most recent'].textContent = (
+        timeSince < 60 ?
+        'just now' :
+        this.secondsToHuman_(timeSince) + ' ago');
+    } else {
+      this.displayEventCountCells_[tile.type]['Most recent'].textContent =
+          'never';
+    }
+
+    var counts = [0, 0, 0, 0, 0];
+    tile.messages.forEach(function(message) {
+      cutoffs.forEach(function(cutoff, i) {
+        var timeSince = now - message.created;
+        if (timeSince < cutoff[1]) {
+          counts[i]++;
+        }
+      }.bind(this));
+    }.bind(this));
+
+    cutoffs.forEach(function(cutoff, i) {
+      this.displayEventCountCells_[tile.type][cutoff[0]].textContent =
+        counts[i];
+    }.bind(this));
+  }.bind(this));
 };

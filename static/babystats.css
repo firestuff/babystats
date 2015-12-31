@@ -11,6 +11,8 @@ body {
   right: 0;
 }
 
+/* http://www.colourlovers.com/palette/848743/(%E2%97%95_%E2%80%9D_%E2%97%95) */
+
 .babyStatsContainer {
   background-color: white;
 }
@@ -45,11 +47,15 @@ babyStatsFlipperFront {
 }
 
 babyStatsFlipperBack {
+  display: flex;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  padding: 15px;
+  align-items: center;
+  flex-direction: column;
   backface-visibility: hidden;
   transform: rotateY(180deg);
 }
@@ -191,4 +197,47 @@ babyStatsDisplaySleepSummary {
 
 babyStatsDisplaySleepStatus, babyStatsDisplaySleepDuration {
   font-weight: bold;
+}
+
+babyStatsDisplayEventCounts {
+  margin: 15px;
+  display: table;
+}
+
+babyStatsDisplayEventCountHeader {
+  display: table-row;
+}
+
+babyStatsDisplayEventCountSpacer {
+  display: table-cell;
+}
+
+babyStatsDisplayEventCountHeaderTitle {
+  display: table-cell;
+  padding: 4px;
+  color: rgb(138,155,15);
+  font-weight: bold;
+  border-left: 1px solid rgb(233,127,2);
+}
+
+babyStatsDisplayEventCountGroup {
+  display: table-row;
+}
+
+babyStatsDisplayEventCountTitle {
+  display: table-cell;
+  padding: 4px;
+  text-align: right;
+  color: rgb(73,10,61);
+  font-weight: bold;
+  border-top: 1px solid rgb(233,127,2);
+}
+
+babyStatsDisplayEventCountValue {
+  display: table-cell;
+  padding: 4px;
+  text-align: center;
+  color: rgb(189,21,80);
+  border-top: 1px solid rgb(233,127,2);
+  border-left: 1px solid rgb(233,127,2);
 }
