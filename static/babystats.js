@@ -98,6 +98,10 @@ BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_.addEventListener('request', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('request_denied', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
+
+  // Cheap hack to get the DOM to render by yielding before we turn on
+  // transitions.
+  window.setTimeout(this.setTransitions_.bind(this), 0);
 };
 
 
@@ -245,6 +249,16 @@ BabyStats.prototype.rebuildIfNeeded_ = function(e) {
 
 
 /**
+ * Only set transitions once loaded.
+ * @private
+ */
+BabyStats.prototype.setTransitions_ = function() {
+  this.gridOverlayRule_.style.transition = '0.4s';
+  this.cellOverlayRule_.style.transition = '0.4s';
+};
+
+
+/**
  * Construct our stylesheet and insert it into the DOM.
  * @private
  */
@@ -283,22 +297,21 @@ BabyStats.prototype.buildStylesheet_ = function() {
   this.loginRule_.style.visibility = 'hidden';
 
   style.sheet.insertRule('babyStatsGridOverlay {}', 0);
-  var gridOverlay = style.sheet.cssRules[0];
-  gridOverlay.style.display = 'flex';
-  gridOverlay.style.position = 'absolute';
-  gridOverlay.style.top = '80px';
-  gridOverlay.style.left = 0;
-  gridOverlay.style.bottom = 0;
-  gridOverlay.style.right = 0;
-  gridOverlay.style.alignItems = 'center';
-  gridOverlay.style.flexDirection = 'column';
-  gridOverlay.style.justifyContent = 'center';
-  gridOverlay.style.backgroundColor = 'rgba(255,255,255,0.7)';
-  gridOverlay.style.color = 'rgb(189,21,80)';
-  gridOverlay.style.textShadow = '0 0 2px rgb(248,202,0)';
-  gridOverlay.style.fontSize = '6vmin';
-  gridOverlay.style.fontWeight = 'bold';
-  gridOverlay.style.transition = '0.4s';
+  this.gridOverlayRule_ = style.sheet.cssRules[0];
+  this.gridOverlayRule_.style.display = 'flex';
+  this.gridOverlayRule_.style.position = 'absolute';
+  this.gridOverlayRule_.style.top = '80px';
+  this.gridOverlayRule_.style.left = 0;
+  this.gridOverlayRule_.style.bottom = 0;
+  this.gridOverlayRule_.style.right = 0;
+  this.gridOverlayRule_.style.alignItems = 'center';
+  this.gridOverlayRule_.style.flexDirection = 'column';
+  this.gridOverlayRule_.style.justifyContent = 'center';
+  this.gridOverlayRule_.style.backgroundColor = 'rgba(255,255,255,0.7)';
+  this.gridOverlayRule_.style.color = 'rgb(189,21,80)';
+  this.gridOverlayRule_.style.textShadow = '0 0 2px rgb(248,202,0)';
+  this.gridOverlayRule_.style.fontSize = '6vmin';
+  this.gridOverlayRule_.style.fontWeight = 'bold';
 
   style.sheet.insertRule('babyStatsActionButton {}', 0);
   var actionButton = style.sheet.cssRules[0];
@@ -380,21 +393,20 @@ BabyStats.prototype.buildStylesheet_ = function() {
   contents.style.borderRadius = '15px';
 
   style.sheet.insertRule('babyStatsCellOverlay {}', 0);
-  var contents = style.sheet.cssRules[0];
-  contents.style.display = 'flex';
-  contents.style.position = 'absolute';
-  contents.style.alignItems = 'center';
-  contents.style.justifyContent = 'center';
-  contents.style.margin = '5px';
-  contents.style.height = 'calc(100% - 10px)';
-  contents.style.width = 'calc(100% - 10px)';
-  contents.style.fontSize = '20vmin';
-  contents.style.fontWeight = 'bold';
-  contents.style.backgroundColor = 'rgb(255,255,255)';
-  contents.style.color = 'rgb(189,21,80)';
-  contents.style.borderRadius = '15px';
-  contents.style.opacity = 0.0;
-  contents.style.transition = '0.4s';
+  this.cellOverlayRule_ = style.sheet.cssRules[0];
+  this.cellOverlayRule_.style.display = 'flex';
+  this.cellOverlayRule_.style.position = 'absolute';
+  this.cellOverlayRule_.style.alignItems = 'center';
+  this.cellOverlayRule_.style.justifyContent = 'center';
+  this.cellOverlayRule_.style.margin = '5px';
+  this.cellOverlayRule_.style.height = 'calc(100% - 10px)';
+  this.cellOverlayRule_.style.width = 'calc(100% - 10px)';
+  this.cellOverlayRule_.style.fontSize = '20vmin';
+  this.cellOverlayRule_.style.fontWeight = 'bold';
+  this.cellOverlayRule_.style.backgroundColor = 'rgb(255,255,255)';
+  this.cellOverlayRule_.style.color = 'rgb(189,21,80)';
+  this.cellOverlayRule_.style.borderRadius = '15px';
+  this.cellOverlayRule_.style.opacity = 0.0;
 
   style.sheet.insertRule('.babyStatsContainer {}', 0);
   var containerRule = style.sheet.cssRules[0];
@@ -559,6 +571,9 @@ BabyStats.prototype.calculateGrid_ = function() {
  * @private
  */
 BabyStats.prototype.buildLayout_ = function() {
+  // Allows loading screen to be embedded in the style tag.
+  this.container_.removeAttribute('style');
+
   this.childName_ = document.createElement('input');
   this.addCSSClass_(this.childName_, 'babyStatsChildName');
   this.childName_.placeholder = 'Child name';
