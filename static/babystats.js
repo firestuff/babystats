@@ -65,6 +65,7 @@ var BabyStats = function(container) {
   ];
 
   this.intervals_ = {};
+  this.displayDates_ = {};
 
   this.buildStylesheet_();
 
@@ -215,6 +216,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
           }.bind(this));
           this.updateTileStatus_();
           this.updateDisplayPage_();
+          this.updateDisplayDate_(message);
         }
       } else {
         console.log('Unknown message type:', message);
@@ -817,4 +819,12 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
     }.bind(this));
   }.bind(this));
+};
+
+
+/**
+ * @private
+ * @param {Cosmopolite.typeMessage} message
+ */
+BabyStats.prototype.updateDisplayDate_ = function(message) {
 };
