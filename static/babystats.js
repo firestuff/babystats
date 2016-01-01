@@ -806,7 +806,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
         }
         deltas.sort();
         var median = deltas[Math.floor(deltas.length / 2)];
-        text += '\n⏱' + this.secondsToHuman_(median);
+        text += '\n⏱ ' + this.secondsToHuman_(median);
       }
       this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
     }.bind(this));
