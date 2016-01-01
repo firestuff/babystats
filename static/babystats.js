@@ -704,15 +704,17 @@ BabyStats.prototype.buildGrid_ = function() {
 /**
  * @private
  * @param {number} seconds
+ * @param {?function} opt_floatToInt
  * @return {string}
  */
-BabyStats.prototype.secondsToHuman_ = function(seconds) {
-  if (seconds > 60 * 60 * 24) {
-    return Math.floor(seconds / (60 * 60 * 24)).toString() + 'd';
-  } else if (seconds > 60 * 60) {
-    return Math.floor(seconds / (60 * 60)).toString() + 'h';
+BabyStats.prototype.secondsToHuman_ = function(seconds, opt_floatToInt) {
+  var floatToInt = opt_floatToInt || Math.floor;
+  if (seconds > 60 * 60 * 24 * 2) {
+    return floatToInt(seconds / (60 * 60 * 24)).toString() + 'd';
+  } else if (seconds > 60 * 60 * 2) {
+    return floatToInt(seconds / (60 * 60)).toString() + 'h';
   } else {
-    return Math.floor(seconds / 60).toString() + 'm';
+    return floatToInt(seconds / 60).toString() + 'm';
   }
 };
 
@@ -806,7 +808,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
         }
         deltas.sort();
         var median = deltas[Math.floor(deltas.length / 2)];
-        text += '\n⏱ ' + this.secondsToHuman_(median);
+        text += '\n⏱ ' + this.secondsToHuman_(median, Math.round);
       }
       this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
     }.bind(this));
