@@ -21,9 +21,9 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  height: 32px;
-  width: 32px;
-  margin: 4px;
+  height: 64px;
+  width: 64px;
+  margin: 8px;
   cursor: pointer;
 }
 
@@ -81,9 +81,9 @@ babyStatsFlipperBack {
   position: absolute;
   top: 0;
   right: 0;
-  height: 32px;
-  width: 32px;
-  margin: 4px;
+  height: 64px;
+  width: 64px;
+  margin: 8px;
   cursor: pointer;
 }
 
