@@ -62,6 +62,12 @@ var BabyStats = function(container) {
       implies: ['awake'],
       timeout: 60 * 30,
     },
+    {
+      type: 'bath',
+      description: 'Bath',
+      implies: ['awake'],
+      timeout: 12 * 60 * 60,
+    },
   ];
 
   this.intervals_ = {};
