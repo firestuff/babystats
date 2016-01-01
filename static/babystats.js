@@ -295,6 +295,7 @@ BabyStats.prototype.setTransitions_ = function() {
  * @private
  * @param {Element} stylesheet
  * @param {string} selector
+ * @return {CSSRule}
  */
 BabyStats.prototype.addStyle_ = function(stylesheet, selector) {
   stylesheet.sheet.insertRule(selector + ' {}', 0);
@@ -575,6 +576,9 @@ BabyStats.prototype.buildLayout_ = function() {
     }.bind(this));
   }.bind(this));
 
+  this.displayTimelines_ = document.createElement('babyStatsDisplayTimelines');
+  back.appendChild(this.displayTimelines_);
+
   var flip = document.createElement('img');
   this.addCSSClass_(flip, 'babyStatsFlip');
   flip.src = '/static/flip.svg';
@@ -704,7 +708,7 @@ BabyStats.prototype.buildGrid_ = function() {
 /**
  * @private
  * @param {number} seconds
- * @param {?function} opt_floatToInt
+ * @param {function(number):number=} opt_floatToInt
  * @return {string}
  */
 BabyStats.prototype.secondsToHuman_ = function(seconds, opt_floatToInt) {
@@ -780,9 +784,9 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     if (tile.lastSeen) {
       var timeSince = now - tile.lastSeen;
       this.displayEventCountCells_[tile.type]['Most recent'].textContent = (
-        timeSince < 60 ?
-        'just now' :
-        this.secondsToHuman_(timeSince) + ' ago');
+          timeSince < 60 ?
+          'just now' :
+          this.secondsToHuman_(timeSince) + ' ago');
     } else {
       this.displayEventCountCells_[tile.type]['Most recent'].textContent =
           'never';
