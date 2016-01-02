@@ -68,6 +68,11 @@ var BabyStats = function(container) {
       implies: ['awake'],
       timeout: 60 * 30,
     },
+    {
+      type: 'pumped',
+      description: 'Breast pumped',
+      timeout: 60 * 30,
+    },
   ];
 
   this.intervals_ = {};
