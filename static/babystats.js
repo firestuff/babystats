@@ -66,7 +66,7 @@ var BabyStats = function(container) {
       type: 'bath',
       description: 'Bath',
       implies: ['awake'],
-      timeout: 12 * 60 * 60,
+      timeout: 60 * 30,
     },
   ];
 
