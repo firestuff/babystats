@@ -200,7 +200,7 @@ babyStatsDisplaySleepStatus, babyStatsDisplaySleepDuration {
 }
 
 babyStatsDisplayEventCounts {
-  margin: 15px;
+  margin: 20px;
   display: table;
   font-size: 20px;
 }
@@ -245,4 +245,21 @@ babyStatsDisplayEventCountValue {
   border-top: 1px solid rgb(233,127,2);
   border-left: 1px solid rgb(233,127,2);
   white-space: pre-line;
+}
+
+babyStatsDisplayTimelines {
+  display: block;
+  width: 100%;
+}
+
+babyStatsDisplayDate {
+  display: block;
+  margin: 15px;
+  text-align: center;
+}
+
+babyStatsDisplayDateTitle {
+  color: rgb(189,21,80);
+  font-size: 20px;
+  font-weight: bold;
 }

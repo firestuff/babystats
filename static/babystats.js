@@ -833,4 +833,27 @@ BabyStats.prototype.updateDisplayPage_ = function() {
  * @param {Cosmopolite.typeMessage} message
  */
 BabyStats.prototype.updateDisplayDate_ = function(message) {
+  var date = new Date(message.created * 1000);
+  var dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+  var days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
+  if (!this.displayDates_[dateStr]) {
+    var dateObj = document.createElement('babyStatsDisplayDate');
+    this.displayDates_[dateStr] = dateObj;
+    this.displayTimelines_.insertBefore(
+        dateObj, this.displayTimelines_.firstChild);
+
+    var dateTitle = document.createElement('babyStatsDisplayDateTitle');
+    dateObj.appendChild(dateTitle);
+    dateTitle.textContent =
+        date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
+  }
 };
