@@ -58,6 +58,7 @@ babyStatsFlipperBack {
   flex-direction: column;
   backface-visibility: hidden;
   transform: rotateY(180deg);
+  overflow: scroll;
 }
 
 .babyStatsChildName, .babyStatsYourName {
@@ -260,6 +261,7 @@ babyStatsDisplayDate {
 }
 
 babyStatsDisplayDateTitle {
+  display: block;
   color: rgb(189,21,80);
   font-size: 20px;
   font-weight: bold;
