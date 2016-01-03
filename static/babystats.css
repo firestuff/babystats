@@ -106,6 +106,25 @@ babyStatsGridOverlay {
   font-weight: bold;
 }
 
+babyStatsActionButton {
+  display: flex;
+  min-width: 35vmin;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(138,155,15);
+  color: rgb(248,202,0);
+  font-size: 3vmin;
+  font-weight: normal;
+  text-shadow: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
 babyStatsGridContainer {
   position: absolute;
   top: 80px;
