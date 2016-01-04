@@ -88,6 +88,22 @@ babyStatsFlipperBack {
   cursor: pointer;
 }
 
+babyStatsMeasurementPrompt {
+  display: flex;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255,255,255,0.7);
+  visibility: hidden;
+  opacity: 0.0;
+}
+
+
 babyStatsGridOverlay {
   display: flex;
   position: absolute;
@@ -184,6 +200,7 @@ babyStatsCellContents {
   background-color: rgb(73,10,61);
   color: rgb(233,127,2);
   border-radius: 15px;
+  overflow: hidden;
 }
 
 babyStatsCellOverlay {

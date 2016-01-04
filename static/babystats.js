@@ -73,6 +73,12 @@ var BabyStats = function(container) {
       description: 'Breast pumped',
       timeout: 60 * 30,
     },
+    {
+      type: 'measurements',
+      description: 'Weight & Temp',
+      custom_handler: this.promptForMeasurements_.bind(this),
+      timeout: 60 * 30,
+    },
   ];
 
   this.intervals_ = {};
@@ -299,6 +305,7 @@ BabyStats.prototype.rebuildIfNeeded_ = function(e) {
  */
 BabyStats.prototype.setTransitions_ = function() {
   this.gridOverlayRule_.style.transition = '0.4s';
+  this.measurementPrompt_.style.transition = '0.4s';
   this.cellOverlayRule_.style.transition = '0.4s';
   this.flipperRule_.style.transition = '1.0s';
 };
@@ -356,7 +363,11 @@ BabyStats.prototype.buildCells_ = function() {
     var overlay = document.createElement('babyStatsCellOverlay');
     cell.appendChild(overlay);
 
-    cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
+    if (tile.custom_handler) {
+      cell.addEventListener('click', tile.custom_handler);
+    } else {
+      cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
+    }
   }, this);
   window.setInterval(this.updateTileStatus_.bind(this), 60 * 1000);
   window.setInterval(this.updateDisplayPage_.bind(this), 60 * 1000);
@@ -530,6 +541,22 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.gridContainer_ = document.createElement('babyStatsGridContainer');
   front.appendChild(this.gridContainer_);
+
+  this.measurementPrompt_ =
+      document.createElement('babyStatsMeasurementPrompt');
+  front.appendChild(this.measurementPrompt_);
+
+  var measurementCancel = document.createElement('babyStatsActionButton');
+  measurementCancel.textContent = 'Cancel';
+  measurementCancel.addEventListener(
+      'click', this.cancelMeasurementPrompt_.bind(this));
+  this.measurementPrompt_.appendChild(measurementCancel);
+
+  var measurementSubmit = document.createElement('babyStatsActionButton');
+  measurementSubmit.textContent = 'Submit';
+  measurementSubmit.addEventListener(
+      'click', this.submitMeasurements_.bind(this));
+  this.measurementPrompt_.appendChild(measurementSubmit);
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   front.appendChild(this.gridOverlay_);
@@ -880,4 +907,31 @@ BabyStats.prototype.updateDisplayDate_ = function(message) {
     }
     dateObj.appendChild(svg);
   }
+};
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.promptForMeasurements_ = function() {
+  this.measurementPrompt_.style.visibility = 'visible';
+  this.measurementPrompt_.style.opacity = 1.0;
+};
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.cancelMeasurementPrompt_ = function() {
+  this.measurementPrompt_.style.visibility = 'hidden';
+  this.measurementPrompt_.style.opacity = 0.0;
+};
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.submitMeasurements_ = function() {
+  this.measurementPrompt_.style.visibility = 'hidden';
+  this.measurementPrompt_.style.opacity = 0.0;
 };
