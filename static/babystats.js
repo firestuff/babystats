@@ -546,17 +546,75 @@ BabyStats.prototype.buildLayout_ = function() {
       document.createElement('babyStatsMeasurementPrompt');
   front.appendChild(this.measurementPrompt_);
 
-  var measurementCancel = document.createElement('babyStatsActionButton');
-  measurementCancel.textContent = 'Cancel';
-  measurementCancel.addEventListener(
-      'click', this.cancelMeasurementPrompt_.bind(this));
-  this.measurementPrompt_.appendChild(measurementCancel);
+  var weight = document.createElement('babyStatsWeight');
+  this.measurementPrompt_.appendChild(weight);
+
+  this.weightKg_ = document.createElement('input');
+  this.addCSSClass_(this.weightKg_, 'babyStatsWeightKg');
+  weight.appendChild(this.weightKg_);
+  this.weightKg_.addEventListener('input', function() {
+    var lb = (parseFloat(this.weightKg_.value) || 0) * 2.2046;
+    this.weightLb_.value = Math.floor(lb);
+    this.weightOz_.value = Math.round(((lb - Math.floor(lb)) * 16) * 10) / 10;
+  }.bind(this));
+
+  weight.appendChild(document.createTextNode('kg = '));
+
+  var LbOzToKg = function() {
+    var lb = (
+        (parseFloat(this.weightLb_.value) || 0)+
+        ((parseFloat(this.weightOz_.value) || 0) / 16));
+    this.weightKg_.value = Math.round((lb / 2.2046) * 10) / 10;
+  }.bind(this);
+
+  this.weightLb_ = document.createElement('input');
+  this.addCSSClass_(this.weightLb_, 'babyStatsWeightLb');
+  weight.appendChild(this.weightLb_);
+  this.weightLb_.addEventListener('input', LbOzToKg);
+
+  weight.appendChild(document.createTextNode('lb '));
+
+  this.weightOz_ = document.createElement('input');
+  this.addCSSClass_(this.weightOz_, 'babyStatsWeightOz');
+  weight.appendChild(this.weightOz_);
+  this.weightOz_.addEventListener('input', LbOzToKg);
+
+  weight.appendChild(document.createTextNode('oz'));
+
+  var temp = document.createElement('babyStatsTemp');
+  this.measurementPrompt_.appendChild(temp);
+
+  this.tempC_ = document.createElement('input');
+  this.addCSSClass_(this.tempC_, 'babyStatsTempC');
+  temp.appendChild(this.tempC_);
+  this.tempC_.addEventListener('input', function() {
+    this.tempF_.value =
+        Math.round(((parseFloat(this.tempC_.value) || 0) * 1.8 + 32) * 10) / 10;
+  }.bind(this));
+
+  temp.appendChild(document.createTextNode('°C = '));
+
+  this.tempF_ = document.createElement('input');
+  this.addCSSClass_(this.tempF_, 'babyStatsTempF');
+  temp.appendChild(this.tempF_);
+  this.tempF_.addEventListener('input', function() {
+    this.tempC_.value =
+        Math.round((((parseFloat(this.tempF_.value) || 0) - 32) / 1.8) * 10) / 10;
+  }.bind(this));
+
+  temp.appendChild(document.createTextNode('°F'));
 
   var measurementSubmit = document.createElement('babyStatsActionButton');
   measurementSubmit.textContent = 'Submit';
   measurementSubmit.addEventListener(
       'click', this.submitMeasurements_.bind(this));
   this.measurementPrompt_.appendChild(measurementSubmit);
+
+  var measurementCancel = document.createElement('babyStatsActionButton');
+  measurementCancel.textContent = 'Cancel';
+  measurementCancel.addEventListener(
+      'click', this.cancelMeasurementPrompt_.bind(this));
+  this.measurementPrompt_.appendChild(measurementCancel);
 
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   front.appendChild(this.gridOverlay_);
@@ -914,6 +972,11 @@ BabyStats.prototype.updateDisplayDate_ = function(message) {
  * @private
  */
 BabyStats.prototype.promptForMeasurements_ = function() {
+  this.weightKg_.value = null;
+  this.weightLb_.value = null;
+  this.weightOz_.value = null;
+  this.tempC_.value = null;
+  this.tempF_.value = null;
   this.measurementPrompt_.style.visibility = 'visible';
   this.measurementPrompt_.style.opacity = 1.0;
 };
@@ -932,6 +995,17 @@ BabyStats.prototype.cancelMeasurementPrompt_ = function() {
  * @private
  */
 BabyStats.prototype.submitMeasurements_ = function() {
+  var msg = {
+    type: 'measurements',
+    sender_name: this.yourName_.value,
+  };
+  if (parseFloat(this.weightKg_.value) > 0) {
+    msg.weight_kg = parseFloat(this.weightKg_.value);
+  }
+  if (parseFloat(this.tempC_.value) > 0) {
+    msg.temp_c = parseFloat(this.tempC_.value);
+  }
+  this.chat_.sendMessage(msg);
   this.measurementPrompt_.style.visibility = 'hidden';
   this.measurementPrompt_.style.opacity = 0.0;
 };

@@ -98,11 +98,33 @@ babyStatsMeasurementPrompt {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255,255,255,0.9);
+  color: rgb(73,10,61);
+  font-size: 3vmin;
+  font-weight: bold;
   visibility: hidden;
   opacity: 0.0;
 }
 
+babyStatsWeight, babyStatsTemp {
+  margin: 20px;
+}
+
+.babyStatsWeightKg, .babyStatsWeightLb, .babyStatsWeightOz,
+.babyStatsTempC, .babyStatsTempF {
+  border: 2px dotted rgb(233,127,2);
+  font-size: 3vmin;
+  height: 4vmin;
+  width: 8vmin;
+  margin: 5px;
+  color: rgb(189,21,80);
+  text-align: center;
+}
+
+.babyStatsWeightKg:focus, .babyStatsWeightLb:focus, .babyStatsWeightOz:focus,
+.babyStatsTempC:focus, .babyStatsTempF:focus {
+  outline: 2px solid rgb(233,127,2);
+}
 
 babyStatsGridOverlay {
   display: flex;
@@ -115,7 +137,7 @@ babyStatsGridOverlay {
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  background-color: rgba(255,255,255,0.7);
+  background-color: rgba(255,255,255,0.9);
   color: rgb(189,21,80);
   text-shadow: 0 0 2px rgb(248,202,0);
   font-size: 6vmin;
