@@ -945,25 +945,6 @@ BabyStats.prototype.updateDisplayDate_ = function(message) {
     dateObj.appendChild(dateTitle);
     dateTitle.textContent =
         date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
-
-    var svgns = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(svgns, "svg");
-    svg.setAttributeNS(null, 'viewBox', '0 0 500 ' + (this.tiles_.length * 10));
-    svg.setAttributeNS(null, 'preserveAspectRatio', 'none');
-    svg.style.display = 'block';
-    svg.style.width = '100%';
-    for (var i = 0; i < this.tiles_.length; i++) {
-      var line = document.createElementNS(svgns, 'line');
-      line.setAttributeNS(null, 'x1', 0);
-      line.setAttributeNS(null, 'x2', 500);
-      line.setAttributeNS(null, 'y1', i * 10 + 5);
-      line.setAttributeNS(null, 'y2', i * 10 + 5);
-      line.setAttributeNS(null, 'stroke',
-                          i % 2 ? 'rgb(233,127,2)' : 'rgb(248,202,0)');
-      line.setAttributeNS(null, 'stroke-width', 1);
-      svg.appendChild(line);
-    }
-    dateObj.appendChild(svg);
   }
 };
 
