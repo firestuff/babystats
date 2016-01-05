@@ -43,6 +43,7 @@ babyStatsFlipperFront {
   bottom: 0;
   right: 0;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   z-index: 2;
 }
 
@@ -57,6 +58,7 @@ babyStatsFlipperBack {
   align-items: center;
   flex-direction: column;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transform: rotateY(180deg);
   overflow: scroll;
 }
