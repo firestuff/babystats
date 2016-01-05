@@ -562,7 +562,7 @@ BabyStats.prototype.buildLayout_ = function() {
 
   var LbOzToKg = function() {
     var lb = (
-        (parseFloat(this.weightLb_.value) || 0)+
+        (parseFloat(this.weightLb_.value) || 0) +
         ((parseFloat(this.weightOz_.value) || 0) / 16));
     this.weightKg_.value = Math.round((lb / 2.2046) * 10) / 10;
   }.bind(this);
@@ -598,8 +598,8 @@ BabyStats.prototype.buildLayout_ = function() {
   this.addCSSClass_(this.tempF_, 'babyStatsTempF');
   temp.appendChild(this.tempF_);
   this.tempF_.addEventListener('input', function() {
-    this.tempC_.value =
-        Math.round((((parseFloat(this.tempF_.value) || 0) - 32) / 1.8) * 10) / 10;
+    this.tempC_.value = Math.round(
+        (((parseFloat(this.tempF_.value) || 0) - 32) / 1.8) * 10) / 10;
   }.bind(this));
 
   temp.appendChild(document.createTextNode('°F'));
@@ -924,7 +924,8 @@ BabyStats.prototype.updateDisplayPage_ = function() {
  */
 BabyStats.prototype.updateDisplayDate_ = function(message) {
   var date = new Date(message.created * 1000);
-  var dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+  var dateStr =
+      date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
   var days = [
     'Sunday',
     'Monday',
