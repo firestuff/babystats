@@ -80,6 +80,10 @@ var BabyStats = function(container) {
       timeout: 60 * 30,
     },
   ];
+  this.tilesByType_ = {};
+  this.tiles_.forEach(function(tile) {
+    this.tilesByType_[tile.type] = tile;
+  }.bind(this));
 
   this.intervals_ = {};
   this.displayDates_ = {};
@@ -184,16 +188,6 @@ BabyStats.prototype.onMessage_ = function(e) {
 
 
 /**
- * @param {string} type
- * @return {Object}
- * @private
- */
-BabyStats.prototype.findTile_ = function(type) {
-  return this.tiles_.find(function(tile) { return tile.type == type; });
-};
-
-
-/**
  * @param {boolean} isEvent
  * @param {Cosmopolite.typeMessage} message
  * @private
@@ -217,7 +211,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
       break;
 
     default:
-      var tile = this.findTile_(message.message.type);
+      var tile = this.tilesByType_[message.message.type];
       if (tile) {
         if (tile.ignore_duplicates && tile.active) {
           // Ignore (double trigger of a state-based tile)
@@ -228,11 +222,13 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
           tile.active = true;
           tile.messages.push(message);
           (tile.cancels || []).forEach(function(type) {
-            tile2 = this.findTile_(type);
+            tile2 = this.tilesByType_[type];
             tile2.active = false;
           }.bind(this));
-          this.updateTileStatus_();
-          this.updateDisplayPage_();
+          if (isEvent) {
+            this.updateTileStatus_();
+            this.updateDisplayPage_();
+          }
           this.updateDisplayDate_(message);
         }
       } else {
@@ -853,8 +849,8 @@ BabyStats.prototype.updateTileStatus_ = function() {
 BabyStats.prototype.updateDisplayPage_ = function() {
   var now = Date.now() / 1000;
 
-  var asleep = this.findTile_('asleep');
-  var awake = this.findTile_('awake');
+  var asleep = this.tilesByType_['asleep'];
+  var awake = this.tilesByType_['awake'];
   if (asleep.active || awake.active) {
     this.displaySleepSummary_.style.visibility = 'visible';
     if (asleep.active) {
