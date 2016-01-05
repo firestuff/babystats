@@ -356,13 +356,13 @@ BabyStats.prototype.buildCells_ = function() {
     tile.statusBox = document.createElement('babyStatsCellStatus');
     cell.appendChild(tile.statusBox);
 
-    var overlay = document.createElement('babyStatsCellOverlay');
-    cell.appendChild(overlay);
+    tile.overlay = document.createElement('babyStatsCellOverlay');
+    cell.appendChild(tile.overlay);
 
     if (tile.custom_handler) {
       cell.addEventListener('click', tile.custom_handler);
     } else {
-      cell.addEventListener('click', this.onClick_.bind(this, tile, overlay));
+      cell.addEventListener('click', this.onClick_.bind(this, tile));
     }
   }, this);
   window.setInterval(this.updateTileStatus_.bind(this), 60 * 1000);
@@ -373,32 +373,33 @@ BabyStats.prototype.buildCells_ = function() {
 /**
  * Handle a click event on a button.
  * @param {Object} tile tile description struct
- * @param {Element} overlay element to make visible with countdown timer
  * @private
  */
-BabyStats.prototype.onClick_ = function(tile, overlay) {
+BabyStats.prototype.onClick_ = function(tile) {
   if (this.intervals_[tile.type]) {
     window.clearInterval(this.intervals_[tile.type]);
     delete this.intervals_[tile.type];
-    overlay.style.opacity = 0.0;
+    tile.overlay.style.opacity = 0.0;
     return;
   }
+  (tile.implies || []).forEach(function(type) {
+    var tile2 = this.tilesByType_[type];
+    if (!tile2.active && !this.intervals_[type]) {
+      this.onClick_(tile2);
+    }
+  }.bind(this));
   var timer = 5;
-  overlay.textContent = timer;
-  overlay.style.opacity = 0.5;
+  tile.overlay.textContent = timer;
+  tile.overlay.style.opacity = 0.5;
   this.intervals_[tile.type] = window.setInterval(function() {
     timer--;
     switch (timer) {
       case 0:
-        var types = tile.implies || [];
-        types.push(tile.type);
-        types.forEach(function(type) {
-          this.chat_.sendMessage({
-            type: type,
-            sender_name: this.yourName_.value,
-          });
-        }.bind(this));
-        overlay.textContent = '✓';
+        this.chat_.sendMessage({
+          type: tile.type,
+          sender_name: this.yourName_.value,
+        });
+        tile.overlay.textContent = '✓';
         break;
 
       case -1:
@@ -407,11 +408,11 @@ BabyStats.prototype.onClick_ = function(tile, overlay) {
       case -2:
         window.clearInterval(this.intervals_[tile.type]);
         delete this.intervals_[tile.type];
-        overlay.style.opacity = 0.0;
+        tile.overlay.style.opacity = 0.0;
         break;
 
       default:
-        overlay.textContent = timer;
+        tile.overlay.textContent = timer;
         break;
     }
   }.bind(this), 1000);
