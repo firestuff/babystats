@@ -15,6 +15,7 @@ body {
 
 .babyStatsContainer {
   background-color: white;
+  perspective: 1000px;
 }
 
 .babyStatsFlip {
