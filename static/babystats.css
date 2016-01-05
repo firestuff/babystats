@@ -45,7 +45,7 @@ babyStatsFlipperFront {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   z-index: 2;
-  transform: rotateY(180deg);
+  transform: rotateY(0deg);
 }
 
 babyStatsFlipperBack {
