@@ -109,6 +109,10 @@ BabyStats.prototype.onChartsReady_ = function() {
   this.weightTable_.addColumn('datetime', 'Sample Date');
   this.weightTable_.addColumn('number', 'Weight');
 
+  this.tempTable_ = new google.visualization.DataTable();
+  this.tempTable_.addColumn('datetime', 'Sample Date');
+  this.tempTable_.addColumn('number', 'Temperature');
+
   this.checkInit_();
 };
 
@@ -701,6 +705,10 @@ BabyStats.prototype.buildLayout_ = function() {
   back.appendChild(this.displayWeight_);
   this.weightChart_ = new google.visualization.LineChart(this.displayWeight_);
 
+  this.displayTemp_ = document.createElement('babyStatsDisplayTemp');
+  back.appendChild(this.displayTemp_);
+  this.tempChart_ = new google.visualization.LineChart(this.displayTemp_);
+
   this.displayTimelines_ = document.createElement('babyStatsDisplayTimelines');
   back.appendChild(this.displayTimelines_);
 
@@ -949,11 +957,40 @@ BabyStats.prototype.updateDisplayPage_ = function() {
 
   this.weightChart_.draw(this.weightTable_, {
     title: 'Weight',
+    curveType: 'function',
     legend: {
       position: 'none',
     },
     vAxis: {
-      title: 'kg',
+      title: 'Kilograms',
+    },
+    explorer: {
+      actions: [
+        'dragToZoom',
+        'rightClickToReset',
+      ],
+    },
+  });
+
+  this.tempChart_.draw(this.tempTable_, {
+    title: 'Temperature (last 7 days)',
+    curveType: 'function',
+    legend: {
+      position: 'none',
+    },
+    hAxis: {
+      viewWindow: {
+        min: new Date((now - (60 * 60 * 24 * 7)) * 1000),
+      },
+    },
+    vAxis: {
+      title: '° Celsius',
+    },
+    explorer: {
+      actions: [
+        'dragToZoom',
+        'rightClickToReset',
+      ],
     },
   });
 };
@@ -970,6 +1007,9 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
     case 'measurements':
       if (message.message.weight_kg) {
         this.weightTable_.addRow([date, message.message.weight_kg]);
+      }
+      if (message.message.temp_c) {
+        this.tempTable_.addRow([date, message.message.temp_c]);
       }
       break;
   }

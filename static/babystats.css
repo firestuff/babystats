@@ -318,6 +318,13 @@ babyStatsDisplayWeight {
   flex-shrink: 0;
 }
 
+babyStatsDisplayTemp {
+  display: block;
+  width: 90%;
+  height: 50vw;
+  flex-shrink: 0;
+}
+
 babyStatsDisplayTimelines {
   display: block;
   width: 100%;
