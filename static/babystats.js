@@ -87,6 +87,9 @@ var BabyStats = function(container) {
 
   this.intervals_ = {};
 
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(this.onChartsReady_.bind(this));
+
   this.buildStylesheet_();
 
   this.cosmo_ = new Cosmopolite();
@@ -99,11 +102,34 @@ var BabyStats = function(container) {
 
 
 /**
+ * @private
+ */
+BabyStats.prototype.onChartsReady_ = function() {
+  this.weightTable_ = new google.visualization.DataTable();
+  this.weightTable_.addColumn('datetime', 'Sample Date');
+  this.weightTable_.addColumn('number', 'Weight');
+
+  this.checkInit_();
+};
+
+
+/**
  * @param {hogfather.PublicChat} chat
  * @private
  */
 BabyStats.prototype.onChatReady_ = function(chat) {
   this.chat_ = chat;
+  this.checkInit_();
+};
+
+
+/**
+ * @private
+ */
+BabyStats.prototype.checkInit_ = function() {
+  if (!this.chat_ || !this.weightTable_) {
+    return;
+  }
 
   this.buildCells_();
   this.buildLayout_();
@@ -224,11 +250,12 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
             tile2 = this.tilesByType_[type];
             tile2.active = false;
           }.bind(this));
+
+          this.updateDisplayIncremental_(message);
           if (isEvent) {
             this.updateTileStatus_();
             this.updateDisplayPage_();
           }
-          this.updateDisplayIncremental_(message);
         }
       } else {
         console.log('Unknown message type:', message);
@@ -670,6 +697,10 @@ BabyStats.prototype.buildLayout_ = function() {
     }.bind(this));
   }.bind(this));
 
+  this.displayWeight_ = document.createElement('babyStatsDisplayWeight');
+  back.appendChild(this.displayWeight_);
+  this.weightChart_ = new google.visualization.LineChart(this.displayWeight_);
+
   this.displayTimelines_ = document.createElement('babyStatsDisplayTimelines');
   back.appendChild(this.displayTimelines_);
 
@@ -847,6 +878,10 @@ BabyStats.prototype.updateTileStatus_ = function() {
  * @private
  */
 BabyStats.prototype.updateDisplayPage_ = function() {
+  if (!this.chat_) {
+    return;
+  }
+
   var now = Date.now() / 1000;
 
   var asleep = this.tilesByType_['asleep'];
@@ -911,6 +946,16 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
     }.bind(this));
   }.bind(this));
+
+  this.weightChart_.draw(this.weightTable_, {
+    title: 'Weight',
+    legend: {
+      position: 'none',
+    },
+    vAxis: {
+      title: 'kg',
+    },
+  });
 };
 
 
@@ -920,6 +965,16 @@ BabyStats.prototype.updateDisplayPage_ = function() {
  */
 BabyStats.prototype.updateDisplayIncremental_ = function(message) {
   var date = new Date(message.created * 1000);
+
+  switch (message.message.type) {
+    case 'measurements':
+      if (message.message.weight_kg) {
+        this.weightTable_.addRow([date, message.message.weight_kg]);
+      }
+      break;
+  }
+
+  /*
   var dateStr =
       date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
   var days = [
@@ -932,7 +987,8 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
     'Saturday',
   ];
 
-  // date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
+  date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
+  */
 };
 
 
