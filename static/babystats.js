@@ -591,7 +591,7 @@ BabyStats.prototype.buildLayout_ = function() {
     var lb = (
         (parseFloat(this.weightLb_.value) || 0) +
         ((parseFloat(this.weightOz_.value) || 0) / 16));
-    this.weightKg_.value = Math.round((lb / 2.2046) * 10) / 10;
+    this.weightKg_.value = Math.round((lb / 2.2046) * 100) / 100;
   }.bind(this);
 
   this.weightLb_ = document.createElement('input');
