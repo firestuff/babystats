@@ -968,6 +968,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
         color: '#8A9B0F',
       },
       viewWindow: {
+        max: new Date(),
       },
     },
     vAxis: {
