@@ -961,8 +961,29 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     legend: {
       position: 'none',
     },
+    hAxis: {
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#8A9B0F',
+      },
+    },
     vAxis: {
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#490A3D',
+      },
       title: 'Kilograms',
+      titleTextStyle: {
+        color: '#490A3D',
+      },
+    },
+    titleTextStyle: {
+      color: '#8A9B0F',
+      fontSize: 20,
     },
     explorer: {
       actions: [
@@ -970,6 +991,9 @@ BabyStats.prototype.updateDisplayPage_ = function() {
         'rightClickToReset',
       ],
     },
+    colors: [
+      '#BD1550',
+    ],
   });
 
   this.tempChart_.draw(this.tempTable_, {
@@ -979,12 +1003,31 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       position: 'none',
     },
     hAxis: {
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#8A9B0F',
+      },
       viewWindow: {
         min: new Date((now - (60 * 60 * 24 * 7)) * 1000),
       },
     },
     vAxis: {
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#490A3D',
+      },
       title: '° Celsius',
+      titleTextStyle: {
+        color: '#490A3D',
+      },
+    },
+    titleTextStyle: {
+      fontSize: 20,
+      color: '#8A9B0F',
     },
     explorer: {
       actions: [
@@ -992,6 +1035,9 @@ BabyStats.prototype.updateDisplayPage_ = function() {
         'rightClickToReset',
       ],
     },
+    colors: [
+      '#BD1550',
+    ],
   });
 };
 
