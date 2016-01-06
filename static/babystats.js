@@ -808,9 +808,9 @@ BabyStats.prototype.buildGrid_ = function() {
  */
 BabyStats.prototype.secondsToHuman_ = function(seconds, opt_floatToInt) {
   var floatToInt = opt_floatToInt || Math.floor;
-  if (seconds > 60 * 60 * 24 * 2) {
+  if (seconds > 60 * 60 * 24 * 3) {
     return floatToInt(seconds / (60 * 60 * 24)).toString() + 'd';
-  } else if (seconds > 60 * 60 * 2) {
+  } else if (seconds > 60 * 60 * 3) {
     return floatToInt(seconds / (60 * 60)).toString() + 'h';
   } else {
     return floatToInt(seconds / 60).toString() + 'm';
