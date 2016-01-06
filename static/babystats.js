@@ -86,7 +86,6 @@ var BabyStats = function(container) {
   }.bind(this));
 
   this.intervals_ = {};
-  this.displayDates_ = {};
 
   this.buildStylesheet_();
 
@@ -229,7 +228,7 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
             this.updateTileStatus_();
             this.updateDisplayPage_();
           }
-          this.updateDisplayDate_(message);
+          this.updateDisplayIncremental_(message);
         }
       } else {
         console.log('Unknown message type:', message);
@@ -919,7 +918,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
  * @private
  * @param {Cosmopolite.typeMessage} message
  */
-BabyStats.prototype.updateDisplayDate_ = function(message) {
+BabyStats.prototype.updateDisplayIncremental_ = function(message) {
   var date = new Date(message.created * 1000);
   var dateStr =
       date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
@@ -933,17 +932,7 @@ BabyStats.prototype.updateDisplayDate_ = function(message) {
     'Saturday',
   ];
 
-  if (!this.displayDates_[dateStr]) {
-    var dateObj = document.createElement('babyStatsDisplayDate');
-    this.displayDates_[dateStr] = dateObj;
-    this.displayTimelines_.insertBefore(
-        dateObj, this.displayTimelines_.firstChild);
-
-    var dateTitle = document.createElement('babyStatsDisplayDateTitle');
-    dateObj.appendChild(dateTitle);
-    dateTitle.textContent =
-        date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
-  }
+  // date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
 };
 
 
