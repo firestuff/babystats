@@ -86,8 +86,14 @@ var BabyStats = function(container) {
   }.bind(this));
 
   this.intervals_ = {};
+  this.lastSleepMessage_ = null;
 
-  google.charts.load('current', {'packages':['corechart']});
+  google.charts.load('current', {
+    'packages': [
+      'corechart',
+      'timeline',
+    ]
+  });
   google.charts.setOnLoadCallback(this.onChartsReady_.bind(this));
 
   this.buildStylesheet_();
@@ -112,6 +118,12 @@ BabyStats.prototype.onChartsReady_ = function() {
   this.tempTable_ = new google.visualization.DataTable();
   this.tempTable_.addColumn('datetime', 'Sample Date');
   this.tempTable_.addColumn('number', 'Temperature');
+
+  this.sleepTable_ = new google.visualization.DataTable();
+  this.sleepTable_.addColumn('string', 'Date');
+  this.sleepTable_.addColumn('string', 'Label');
+  this.sleepTable_.addColumn('datetime', 'Start');
+  this.sleepTable_.addColumn('datetime', 'End');
 
   this.checkInit_();
 };
@@ -709,8 +721,9 @@ BabyStats.prototype.buildLayout_ = function() {
   back.appendChild(this.displayTemp_);
   this.tempChart_ = new google.visualization.LineChart(this.displayTemp_);
 
-  this.displayTimelines_ = document.createElement('babyStatsDisplayTimelines');
-  back.appendChild(this.displayTimelines_);
+  this.displaySleep_ = document.createElement('babyStatsDisplaySleep');
+  back.appendChild(this.displaySleep_);
+  this.sleepChart_ = new google.visualization.Timeline(this.displaySleep_);
 
   var flip = document.createElement('img');
   this.addCSSClass_(flip, 'babyStatsFlip');
@@ -1013,6 +1026,18 @@ BabyStats.prototype.updateDisplayPage_ = function() {
   tempOptions.hAxis.viewWindow.min =
       new Date((now - (60 * 60 * 24 * 7)) * 1000);
   this.tempChart_.draw(this.tempTable_, tempOptions);
+
+  var sleepOptions = {
+    colors: [
+      '#BD1550',
+      '#E97F02',
+    ],
+    timeline: {
+      showBarLabels: false,
+    },
+    avoidOverlappingGridLines: false,
+  };
+  this.sleepChart_.draw(this.sleepTable_, sleepOptions);
 };
 
 
@@ -1032,23 +1057,64 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
         this.tempTable_.addRow([date, message.message.temp_c]);
       }
       break;
+
+    case 'asleep':
+    case 'awake':
+      if (this.lastSleepMessage_) {
+        var timeOnly = function(date) {
+          return new Date(
+            0, 0, 0,
+            date.getHours(),
+            date.getMinutes(),
+            date.getSeconds()
+          );
+        }.bind(this);
+
+        var insertBlock = function(start, end, type) {
+          var days = [
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+          ];
+          var dateStr =
+              days[start.getDay()] + ', ' + start.toLocaleDateString();
+
+          this.sleepTable_.insertRows(0, [[
+            dateStr,
+            type == 'awake' ? 'Awake' : 'Asleep',
+            timeOnly(start),
+            timeOnly(end),
+          ]]);
+        }.bind(this);
+
+        var lastDate = new Date(this.lastSleepMessage_.created * 1000);
+        if (date.toDateString() == lastDate.toDateString()) {
+          insertBlock(lastDate, date, this.lastSleepMessage_.message.type);
+        } else {
+          // Crosses a day boundary.
+          var end = new Date(
+            lastDate.getFullYear(),
+            lastDate.getMonth(),
+            lastDate.getDate(),
+            23, 59, 59);
+          insertBlock(lastDate, end, this.lastSleepMessage_.message.type);
+
+          var start = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            0, 0, 0);
+          insertBlock(start, date, this.lastSleepMessage_.message.type);
+        }
+
+      }
+      this.lastSleepMessage_ = message;
+      break;
   }
-
-  /*
-  var dateStr =
-      date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-  var days = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ];
-
-  date.toLocaleDateString() + ' (' + days[date.getDay()] + ')';
-  */
 };
 
 
