@@ -1034,6 +1034,9 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     ],
     timeline: {
       showBarLabels: false,
+      rowLabelStyle: {
+        color: '#490A3D',
+      },
     },
     avoidOverlappingGridLines: false,
   };
