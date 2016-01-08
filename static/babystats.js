@@ -199,7 +199,8 @@ BabyStats.prototype.onLogin_ = function(e) {
  * @private
  */
 BabyStats.prototype.onLogout_ = function(e) {
-  this.loginURL_ = e.detail.login_url;
+  var detail = /** @type {Cosmopolite.typeEventLogoutDetail} */ (e.detail);
+  this.loginURL_ = detail.login_url;
   this.loginRule_.style.visibility = 'visible';
   this.checkOverlay_();
 };
