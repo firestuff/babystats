@@ -103,7 +103,7 @@ var BabyStats = function(container) {
   this.cosmo_.addEventListener('logout', this.onLogout_.bind(this));
 
   this.client_id_ = this.cosmo_.uuid();
-  hogfather.PublicChat.Join(this.cosmo_, id).then(this.onChatReady_.bind(this));
+  hogfather.PublicChat.join(this.cosmo_, id).then(this.onChatReady_.bind(this));
 };
 
 
