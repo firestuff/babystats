@@ -11,7 +11,6 @@ curl \
   --data externs_url=https://www.cosmopolite.org/externs/cosmopolite.js \
   --data externs_url=http://www.google.com/uds/modules/gviz/gviz-api.js \
   --data-urlencode "js_code@babystats.js" \
-  http://closure-compiler.appspot.com/compile
-echo
+  http://closure-compiler.appspot.com/compile | ./prettyprint.py
 
 gjslint --strict babystats.js
