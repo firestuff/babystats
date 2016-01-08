@@ -9,7 +9,7 @@ curl \
   --data language=ECMASCRIPT5 \
   --data warning_level=verbose \
   --data externs_url=https://www.cosmopolite.org/externs/cosmopolite.js \
-  --data externs_url=http://www.google.com/uds/modules/gviz/gviz-api.js \
+  --data externs_url=https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/google_visualization_api.js \
   --data-urlencode "js_code@babystats.js" \
   http://closure-compiler.appspot.com/compile | ./prettyprint.py
 
