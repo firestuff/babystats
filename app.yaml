@@ -12,6 +12,10 @@ handlers:
   http_headers:
     X-Content-Type-Options: nosniff
 
+- url: /manifest.json
+  script: manifest.app
+  secure: always
+
 - url: /baby/.*
   static_files: static/babystats.html
   upload: static/babystats.html

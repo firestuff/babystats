@@ -147,6 +147,10 @@ BabyStats.prototype.checkInit_ = function() {
     return;
   }
 
+  this.manifest_ = document.createElement('link');
+  this.manifest_.rel = 'manifest';
+  document.head.appendChild(this.manifest_);
+
   this.buildCells_();
   this.buildLayout_();
 
@@ -251,6 +255,8 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
       }
       document.title = message.message.child_name;
       this.displayChildName_.textContent = message.message.child_name;
+      this.manifest_.href =
+          '/manifest.json?name=' + encodeURIComponent(this.childName_.value);
       break;
 
     default:
