@@ -987,7 +987,8 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     }.bind(this));
   }.bind(this));
 
-  var chartOptions = {
+  var weightOptions = {
+    title: 'Weight',
     curveType: 'function',
     legend: {
       position: 'none',
@@ -1004,6 +1005,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       },
     },
     vAxis: {
+      title: 'Kilograms',
       gridlines: {
         color: '#E97F02',
       },
@@ -1029,21 +1031,53 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       '#BD1550',
     ],
   };
-
-  var weightOptions = {
-    title: 'Weight',
-  };
-  Object.assign(weightOptions, chartOptions);
-  weightOptions.vAxis.title = 'Kilograms';
   this.weightChart_.draw(this.weightTable_, weightOptions);
 
   var tempOptions = {
     title: 'Temperature (last 7 days)',
+    curveType: 'function',
+    legend: {
+      position: 'none',
+    },
+    hAxis: {
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#8A9B0F',
+      },
+      viewWindow: {
+        min: new Date((now - (60 * 60 * 24 * 7)) * 1000),
+        max: new Date(),
+      },
+    },
+    vAxis: {
+      title: '° Celsius',
+      gridlines: {
+        color: '#E97F02',
+      },
+      textStyle: {
+        color: '#490A3D',
+      },
+      titleTextStyle: {
+        fontSize: 17,
+        color: '#490A3D',
+      },
+    },
+    titleTextStyle: {
+      color: '#8A9B0F',
+      fontSize: 20,
+    },
+    explorer: {
+      actions: [
+        'dragToZoom',
+        'rightClickToReset',
+      ],
+    },
+    colors: [
+      '#BD1550',
+    ],
   };
-  Object.assign(tempOptions, chartOptions);
-  tempOptions.vAxis.title = '° Celsius';
-  tempOptions.hAxis.viewWindow.min =
-      new Date((now - (60 * 60 * 24 * 7)) * 1000);
   this.tempChart_.draw(this.tempTable_, tempOptions);
 
   var sleepOptions = {
