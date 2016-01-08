@@ -1,27 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-<g transform="rotate(0 50 50)">
-  <circle r="5" cx="30" cy="50">
-    <animateTransform attributeName="transform" type="translate" begin="0s" repeatCount="indefinite" dur="1s" values="0 0;13.819660112501051 -19.02113032590307" keyTimes="0;1"/>
-    <animate attributeName="fill" dur="1s" begin="0s" repeatCount="indefinite"  keyTimes="0;1" values="#430a39;#bc1550"/>
-  </circle>
-</g><g transform="rotate(72 50 50)">
-  <circle r="5" cx="30" cy="50">
-    <animateTransform attributeName="transform" type="translate" begin="0s" repeatCount="indefinite" dur="1s" values="0 0;13.819660112501051 -19.02113032590307" keyTimes="0;1"/>
-    <animate attributeName="fill" dur="1s" begin="0s" repeatCount="indefinite"  keyTimes="0;1" values="#bc1550;#e87f02"/>
-  </circle>
-</g><g transform="rotate(144 50 50)">
-  <circle r="5" cx="30" cy="50">
-    <animateTransform attributeName="transform" type="translate" begin="0s" repeatCount="indefinite" dur="1s" values="0 0;13.819660112501051 -19.02113032590307" keyTimes="0;1"/>
-    <animate attributeName="fill" dur="1s" begin="0s" repeatCount="indefinite"  keyTimes="0;1" values="#e87f02;#f5c700"/>
-  </circle>
-</g><g transform="rotate(216 50 50)">
-  <circle r="5" cx="30" cy="50">
-    <animateTransform attributeName="transform" type="translate" begin="0s" repeatCount="indefinite" dur="1s" values="0 0;13.819660112501051 -19.02113032590307" keyTimes="0;1"/>
-    <animate attributeName="fill" dur="1s" begin="0s" repeatCount="indefinite"  keyTimes="0;1" values="#f5c700;#88990f"/>
-  </circle>
-</g><g transform="rotate(288 50 50)">
-  <circle r="5" cx="30" cy="50">
-    <animateTransform attributeName="transform" type="translate" begin="0s" repeatCount="indefinite" dur="1s" values="0 0;13.819660112501051 -19.02113032590307" keyTimes="0;1"/>
-    <animate attributeName="fill" dur="1s" begin="0s" repeatCount="indefinite"  keyTimes="0;1" values="#88990f;#430a39"/>
-  </circle>
-</g></svg>
+<style type="text/css" >
+  <![CDATA[
+@keyframes coloredBounce {
+  0% {
+    fill: #430a39;
+    transform: translate(0, -20px);
+  }
+
+  20% {
+    fill: #bc1550;
+    transform: translate(19px, -6px);
+  }
+
+  40% {
+    fill: #e87f02;
+    transform: translate(12px, 16px);
+  }
+
+  60% {
+    fill: #f5c700;
+    transform: translate(-12px, 16px);
+  }
+
+  80% {
+    fill: #88990f;
+    transform: translate(-19px, -6px);
+  }
+
+  100% {
+    fill: #430a39;
+    transform: translate(0, -20px);
+  }
+}
+
+circle {
+  animation: coloredBounce 5s linear infinite;
+}
+  ]]>
+</style>
+<circle r="5" cx="50" cy="50"></circle>
+<circle r="5" cx="50" cy="50" style="animation-delay: -1s"></circle>
+<circle r="5" cx="50" cy="50" style="animation-delay: -2s"></circle>
+<circle r="5" cx="50" cy="50" style="animation-delay: -3s"></circle>
+<circle r="5" cx="50" cy="50" style="animation-delay: -4s"></circle>
+</svg>
