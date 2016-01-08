@@ -778,7 +778,7 @@ BabyStats.prototype.checkOverlay_ = function() {
   this.spinner_.style.opacity = 0.0;
 
   var message = '', actions = [];
-  if (!this.cosmo_.isConnected()) {
+  if (!this.cosmo_.connected()) {
     this.spinner_.style.visibility = 'visible';
     this.spinner_.style.opacity = 1.0;
     message = ' ';
