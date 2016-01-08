@@ -1085,10 +1085,10 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
       if (this.lastSleepMessage_) {
         var timeOnly = function(date) {
           return new Date(
-            0, 0, 0,
-            date.getHours(),
-            date.getMinutes(),
-            date.getSeconds()
+              0, 0, 0,
+              date.getHours(),
+              date.getMinutes(),
+              date.getSeconds()
           );
         }.bind(this);
 
@@ -1119,17 +1119,17 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
         } else {
           // Crosses a day boundary.
           var end = new Date(
-            lastDate.getFullYear(),
-            lastDate.getMonth(),
-            lastDate.getDate(),
-            23, 59, 59);
+              lastDate.getFullYear(),
+              lastDate.getMonth(),
+              lastDate.getDate(),
+              23, 59, 59);
           insertBlock(lastDate, end, this.lastSleepMessage_.message.type);
 
           var start = new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            0, 0, 0);
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
+              0, 0, 0);
           insertBlock(start, date, this.lastSleepMessage_.message.type);
         }
 
