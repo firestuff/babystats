@@ -130,6 +130,18 @@ babyStatsWeight, babyStatsTemp {
   outline: 2px solid rgb(233,127,2);
 }
 
+babyStatsSpinner {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('/static/spinner.svg');
+}
+
 babyStatsGridOverlay {
   display: flex;
   position: absolute;

@@ -168,6 +168,8 @@ BabyStats.prototype.checkInit_ = function() {
   this.chat_.addEventListener('request', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('request_denied', this.checkOverlay_.bind(this));
   this.chat_.addEventListener('acl_change', this.checkOverlay_.bind(this));
+  this.cosmo_.addEventListener('connect', this.checkOverlay_.bind(this));
+  this.cosmo_.addEventListener('disconnect', this.checkOverlay_.bind(this));
 
   this.updateTileStatus_();
   this.updateDisplayPage_();
@@ -343,6 +345,7 @@ BabyStats.prototype.rebuildIfNeeded_ = function(e) {
  */
 BabyStats.prototype.setTransitions_ = function() {
   this.gridOverlayRule_.style.transition = '0.4s';
+  this.spinner_.style.transition = '0.4s';
   this.measurementPrompt_.style.transition = '0.4s';
   this.cellOverlayRule_.style.transition = '0.4s';
   this.flipperRule_.style.transition = '1.0s';
@@ -658,6 +661,9 @@ BabyStats.prototype.buildLayout_ = function() {
   this.gridOverlay_ = document.createElement('babyStatsGridOverlay');
   front.appendChild(this.gridOverlay_);
 
+  this.spinner_ = document.createElement('babyStatsSpinner');
+  front.appendChild(this.spinner_);
+
   // Back (read-only) side
   this.displayChildName_ = document.createElement('babyStatsDisplayChildName');
   back.appendChild(this.displayChildName_);
@@ -762,8 +768,15 @@ BabyStats.prototype.checkOverlay_ = function() {
     }.bind(this));
   }
 
+  this.spinner_.style.visibility = 'hidden';
+  this.spinner_.style.opacity = 0.0;
+
   var message = '', actions = [];
-  if (!this.childName_.value) {
+  if (!this.cosmo_.isConnected()) {
+    this.spinner_.style.visibility = 'visible';
+    this.spinner_.style.opacity = 1.0;
+    message = ' ';
+  } else if (!this.childName_.value) {
     message = 'Please enter child name above';
   } else if (!this.yourName_.value) {
     message = 'Please enter your name above';
