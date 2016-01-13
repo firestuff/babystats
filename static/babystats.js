@@ -992,7 +992,7 @@ BabyStats.prototype.updateDisplayPage_ = function() {
       },
       {
         name: 'All time',
-        cutoff:  Number.MAX_VALUE,
+        cutoff: Number.MAX_VALUE,
         deltas: [],
         count: 0,
       },
