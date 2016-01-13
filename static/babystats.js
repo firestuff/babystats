@@ -732,7 +732,7 @@ BabyStats.prototype.buildLayout_ = function() {
 
   this.displayTemp_ = document.createElement('babyStatsDisplayTemp');
   back.appendChild(this.displayTemp_);
-  this.tempChart_ = new google.visualization.LineChart(this.displayTemp_);
+  this.tempChart_ = new google.visualization.ScatterChart(this.displayTemp_);
 
   this.displaySleep_ = document.createElement('babyStatsDisplaySleep');
   back.appendChild(this.displaySleep_);
