@@ -127,17 +127,17 @@ BabyStats.prototype.onChartsReady_ = function() {
 
   /* Without these fake legend rows, the color assignments change. */
   this.sleepTable_.addRow([
-      'Awake',
-      'Awake',
-      new Date(0, 0, 0, 0, 0, 0),
-      new Date(0, 0, 0, 23, 59, 59),
+    'Awake',
+    'Awake',
+    new Date(0, 0, 0, 0, 0, 0),
+    new Date(0, 0, 0, 23, 59, 59),
   ]);
 
   this.sleepTable_.addRow([
-      'Asleep',
-      'Asleep',
-      new Date(0, 0, 0, 0, 0, 0),
-      new Date(0, 0, 0, 23, 59, 59),
+    'Asleep',
+    'Asleep',
+    new Date(0, 0, 0, 0, 0, 0),
+    new Date(0, 0, 0, 23, 59, 59),
   ]);
 
   this.checkInit_();
