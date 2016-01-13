@@ -285,6 +285,11 @@ BabyStats.prototype.handleMessage_ = function(isEvent, message) {
         } else {
           tile.lastSeen = message.created;
           tile.active = true;
+          if (tile.messages.length) {
+            var lastMessage = tile.messages[tile.messages.length - 1];
+            tile.deltas.push(message.created - lastMessage.created);
+            tile.deltasDirty = true;
+          }
           tile.messages.push(message);
           (tile.cancels || []).forEach(function(type) {
             tile2 = this.tilesByType_[type];
@@ -412,6 +417,8 @@ BabyStats.prototype.buildCells_ = function() {
   this.tiles_.forEach(function(tile) {
     tile.active = false;
     tile.messages = [];
+    tile.deltas = [];
+    tile.deltasDirty = false;
 
     var cell = document.createElement('babyStatsCell');
     this.cells_.push(cell);
@@ -957,15 +964,41 @@ BabyStats.prototype.updateDisplayPage_ = function() {
     this.displaySleepSummary_.style.visibility = 'hidden';
   }
 
-  var cutoffs = [
-    ['Past 6h', 6 * 60 * 60],
-    ['Past 24h', 24 * 60 * 60],
-    ['Past 7d', 7 * 24 * 60 * 60],
-    ['Past 30d', 30 * 24 * 60 * 60],
-    ['All time', Number.MAX_VALUE],
-  ];
-
   this.tiles_.forEach(function(tile) {
+    var buckets = [
+      {
+        name: 'Past 6h',
+        cutoff: 6 * 60 * 60,
+        deltas: [],
+        count: 0,
+      },
+      {
+        name: 'Past 24h',
+        cutoff: 24 * 60 * 60,
+        deltas: [],
+        count: 0,
+      },
+      {
+        name: 'Past 7d',
+        cutoff: 7 * 24 * 60 * 60,
+        deltas: [],
+        count: 0,
+      },
+      {
+        name: 'Past 30d',
+        cutoff: 30 * 24 * 60 * 60,
+        deltas: [],
+        count: 0,
+      },
+      {
+        name: 'All time',
+        cutoff:  Number.MAX_VALUE,
+        deltas: [],
+        count: 0,
+      },
+    ];
+    var allTime = 4;
+
     if (tile.lastSeen) {
       var timeSince = now - tile.lastSeen;
       this.displayEventCountCells_[tile.type]['Most recent'].textContent = (
@@ -977,29 +1010,47 @@ BabyStats.prototype.updateDisplayPage_ = function() {
           'never';
     }
 
-    var timestamps = [[], [], [], [], []];
-    tile.messages.forEach(function(message) {
-      cutoffs.forEach(function(cutoff, i) {
-        var timeSince = now - message.created;
-        if (timeSince < cutoff[1]) {
-          // Sample belongs in this bucket
-          timestamps[i].push(message.created);
-        }
-      }.bind(this));
-    }.bind(this));
+    if (tile.deltasDirty) {
+      tile.deltas.sort();
+      tile.deltasDirty = false;
+    }
+    buckets[allTime].deltas = tile.deltas;
+    buckets[allTime].count = tile.messages.length;
 
-    cutoffs.forEach(function(cutoff, i) {
-      var text = timestamps[i].length.toString();
-      if (timestamps[i].length >= 2) {
-        var deltas = [];
-        for (var j = 1; j < timestamps[i].length; j++) {
-          deltas.push(timestamps[i][j] - timestamps[i][j - 1]);
+    var startBucket = 0;
+    var lastTimestamp = null;
+    for (var i = tile.messages.length - 1; i >= 0; i--) {
+      var message = tile.messages[i];
+      var timeSince = now - message.created;
+      while (startBucket < allTime &&
+             timeSince > buckets[startBucket].cutoff) {
+        startBucket++;
+      }
+      if (startBucket == allTime) {
+        // All remaining messages are outside the last bucket.
+        break;
+      }
+      var delta = null;
+      if (lastTimestamp) {
+        delta = lastTimestamp - message.created;
+      }
+      for (var j = startBucket; j < allTime; j++) {
+        buckets[j].count++;
+        if (delta) {
+          buckets[j].deltas.push(delta);
         }
-        deltas.sort();
-        var median = deltas[Math.floor(deltas.length / 2)];
+      }
+      lastTimestamp = message.created;
+    }
+
+    buckets.forEach(function(bucket) {
+      var text = bucket.count.toString();
+      if (bucket.deltas.length) {
+        bucket.deltas.sort();
+        var median = bucket.deltas[Math.floor(bucket.deltas.length / 2)];
         text += '\n⏱ ' + this.secondsToHuman_(median, Math.round);
       }
-      this.displayEventCountCells_[tile.type][cutoff[0]].textContent = text;
+      this.displayEventCountCells_[tile.type][bucket.name].textContent = text;
     }.bind(this));
   }.bind(this));
 
