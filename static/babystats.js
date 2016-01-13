@@ -125,6 +125,21 @@ BabyStats.prototype.onChartsReady_ = function() {
   this.sleepTable_.addColumn('datetime', 'Start');
   this.sleepTable_.addColumn('datetime', 'End');
 
+  /* Without these fake legend rows, the color assignments change. */
+  this.sleepTable_.addRow([
+      'Awake',
+      'Awake',
+      new Date(0, 0, 0, 0, 0, 0),
+      new Date(0, 0, 0, 23, 59, 59),
+  ]);
+
+  this.sleepTable_.addRow([
+      'Asleep',
+      'Asleep',
+      new Date(0, 0, 0, 0, 0, 0),
+      new Date(0, 0, 0, 23, 59, 59),
+  ]);
+
   this.checkInit_();
 };
 
@@ -1140,7 +1155,7 @@ BabyStats.prototype.updateDisplayIncremental_ = function(message) {
           var dateStr =
               days[start.getDay()] + ', ' + start.toLocaleDateString();
 
-          this.sleepTable_.insertRows(0, [[
+          this.sleepTable_.insertRows(2, [[
             dateStr,
             type == 'awake' ? 'Awake' : 'Asleep',
             timeOnly(start),
